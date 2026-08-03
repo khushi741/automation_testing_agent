@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Self-Healing Test Automation Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(22, 28, 45, 0.4);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #f59e0b;
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --glass-grad: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                              radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+        }
+
+        /* Sidebar navigation */
+        .sidebar {
+            width: 260px;
+            background-color: #070a13;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .brand-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 0 16px rgba(59, 130, 246, 0.4);
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            padding: 0.85rem 1.25rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.2);
+            box-shadow: inset 0 0 12px rgba(59, 130, 246, 0.05);
+        }
+
+        /* Main content wrapper */
+        .main-wrapper {
+            margin-left: 260px;
+            flex: 1;
+            padding: 2.5rem;
+            max-width: calc(100% - 260px);
+        }
+
+        .header-title {
+            font-size: 1.85rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Tab Content panels */
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Forms and interactive controls */
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .panel-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.75rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            background-color: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        textarea:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+        }
+
+        .controls-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        select {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            height: 48px;
+        }
+
+        /* Switch toggling */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-green);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            border: none;
+            color: white;
+            font-family: inherit;
+            font-weight: 600;
+            padding: 0.9rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Suggestions box */
+        .suggestions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .suggestion-item {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem 0.75rem;
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.15s;
+        }
+
+        .suggestion-item:hover {
+            color: white;
+            background-color: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        /* Terminal Logs style */
+        .terminal-container {
+            background-color: #05070c;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            min-height: 240px;
+            max-height: 380px;
+            overflow-y: auto;
+            color: #34d399;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .terminal-log-line {
+            line-height: 1.4;
+            white-space: pre-wrap;
+            border-left: 2px solid transparent;
+            padding-left: 0.5rem;
+        }
+
+        .terminal-log-line.system {
+            color: #60a5fa;
+        }
+
+        .terminal-log-line.warning {
+            color: #f59e0b;
+            border-left-color: #f59e0b;
+        }
+
+        .terminal-log-line.error {
+            color: #ef4444;
+            border-left-color: #ef4444;
+        }
+
+        .terminal-log-line.success {
+            color: #10b981;
+        }
+
+        /* Statistics Cards styling */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .stat-card.blue::before { background-color: var(--accent-blue); }
+        .stat-card.purple::before { background-color: var(--accent-purple); }
+        .stat-card.green::before { background-color: var(--accent-green); }
+        .stat-card.yellow::before { background-color: var(--accent-yellow); }
+
+        .stat-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        /* Comparison Table and Metrics */
+        .comparison-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .comparison-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comp-bar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .comp-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .comp-bar-bg {
+            background-color: rgba(255,255,255,0.05);
+            height: 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .comp-bar-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 1s ease-in-out;
+            display: flex;
+            align-items: center;
+            padding-left: 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .comp-bar-fill.normal-no-heal { background: #3b82f6; }
+        .comp-bar-fill.broken-no-heal { background: #ef4444; }
+        .comp-bar-fill.normal-heal { background: #10b981; }
+        .comp-bar-fill.broken-heal { background: linear-gradient(to right, #10b981, #f59e0b); }
+
+        /* History and tables listing */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.92rem;
+        }
+
+        th {
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+
+        .badge-status {
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-status.passed {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-status.failed {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .view-report-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .view-report-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Progress indicator */
+        .progress-bar-container {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.05);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+            width: 0%;
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        /* Inline logs */
+        .inline-logs {
+            background-color: #05070c;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #6b7280;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">A</div>
+            <div class="brand-name">Antigravity</div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" onclick="switchTab('run-test-tab')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Run Interactive
+            </li>
+            <li class="nav-item" onclick="switchTab('eval-tab')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                Evaluation Suite
+            </li>
+            <li class="nav-item" onclick="switchTab('history-tab')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Execution History
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-wrapper">
+        <!-- Interactive Tester Tab -->
+        <div id="run-test-tab" class="tab-panel active">
+            <h1 class="header-title">Run AI Automation Test</h1>
+            <p class="header-subtitle">Translate a plain English test scenario into live Playwright actions with dynamic self-healing.</p>
+            
+            <div class="panel-grid">
+                <div>
+                    <div class="section-card">
+                        <div class="section-title">Test Case Definitions</div>
+                        <form id="run-test-form">
+                            <div class="form-group">
+                                <label class="form-label">Scenario (Natural Language)</label>
+                                <textarea id="test-description" placeholder="Describe the test case in simple English... (e.g., Navigate to /demo/login, type 'admin' in the username field...)"></textarea>
+                                <div class="suggestions-list">
+                                    <div class="suggestion-item" onclick="selectSuggestion(1)">
+                                        💡 <strong>Basic Authentication:</strong> Navigate to http://localhost:5000/demo/login, type 'admin' in the username, type 'admin123' in the password, click 'Sign In', and assert page displays 'Welcome back'
+                                    </div>
+                                    <div class="suggestion-item" onclick="selectSuggestion(2)">
+                                        💡 <strong>Full Flow + Logout:</strong> Open http://localhost:5000/demo/login, fill username field with 'admin', fill password field with 'admin123', click login button, check if the welcome greeting contains 'Admin', and click 'Logout'
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="controls-row">
+                                <div class="form-group">
+                                    <label class="form-label">Target Page</label>
+                                    <select id="target-mode">
+                                        <option value="normal">Normal Page (Standard Locators)</option>
+                                        <option value="broken">Broken Page (Altered IDs & Text Elements)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Self-Healing Locator</label>
+                                    <div class="toggle-container">
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Enable Local Embeddings</span>
+                                        <label class="switch">
+                                            <input type="checkbox" id="self-healing-toggle" checked>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" id="submit-run-btn" class="btn">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Execute Scenario
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-title">Live Execution Console</div>
+                        <div id="live-console" class="terminal-container">
+                            <div class="terminal-log-line system">> Idle. Enter a scenario description above and click 'Execute'.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="section-card">
+                        <div class="section-title">Execution Result Summary</div>
+                        <div id="result-summary-box" style="display: none; animation: fadeIn 0.4s ease;">
+                            <div style="text-align: center; margin-bottom: 1.5rem;">
+                                <div id="summary-status-badge" class="badge-status" style="font-size: 1rem; display: inline-block; padding: 0.5rem 1.5rem;">Passed</div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.92rem;">
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
+                                    <span class="detail-label">Run ID:</span>
+                                    <span class="detail-value" id="summary-run-id" style="font-family: 'JetBrains Mono', monospace;">-</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
+                                    <span class="detail-label">Duration:</span>
+                                    <span id="summary-duration">-</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
+                                    <span class="detail-label">Self-Healed Selectors:</span>
+                                    <span id="summary-healed-count">-</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                                    <span class="detail-label">Detailed Report:</span>
+                                    <a id="summary-report-link" class="view-report-link" href="#" target="_blank">Open Report HTML</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="result-summary-placeholder" style="color: var(--text-secondary); font-style: italic; text-align: center; padding: 2rem 0;">
+                            No test run executed in this session yet.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation Tab -->
+        <div id="eval-tab" class="tab-panel">
+            <h1 class="header-title">Quantitative Evaluation Suite</h1>
+            <p class="header-subtitle">Evaluate the agent's performance against 20 natural language test cases. Compare pass rates under broken target nodes with and without local AI self-healing.</p>
+
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-title">Evaluation Cases</div>
+                    <div class="stat-value" id="eval-total-cases">-</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-title">Pass Rate (With Healing)</div>
+                    <div class="stat-value" id="eval-pass-with">-</div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-title">Pass Rate (No Healing)</div>
+                    <div class="stat-value" id="eval-pass-without">-</div>
+                </div>
+                <div class="stat-card yellow">
+                    <div class="stat-title">Avg Healing Confidence</div>
+                    <div class="stat-value" id="eval-avg-confidence">-</div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title">Comparative Analysis (Accuracy on Broken UI)</div>
+                <div class="comparison-layout">
+                    <div>
+                        <h4 style="margin-bottom: 1rem; font-weight: 600;">Comparative Pass Rates</h4>
+                        <div class="comp-bar-container">
+                            <div>
+                                <div class="comp-bar-label">
+                                    <span>Normal Site (No Healing)</span>
+                                    <span id="pct-normal-no-heal">100%</span>
+                                </div>
+                                <div class="comp-bar-bg">
+                                    <div class="comp-bar-fill normal-no-heal" id="fill-normal-no-heal" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="comp-bar-label">
+                                    <span>Broken Site (No Healing)</span>
+                                    <span id="pct-broken-no-heal">0%</span>
+                                </div>
+                                <div class="comp-bar-bg">
+                                    <div class="comp-bar-fill broken-no-heal" id="fill-broken-no-heal" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="comp-bar-label">
+                                    <span>Normal Site (With Healing)</span>
+                                    <span id="pct-normal-heal">100%</span>
+                                </div>
+                                <div class="comp-bar-bg">
+                                    <div class="comp-bar-fill normal-heal" id="fill-normal-heal" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="comp-bar-label">
+                                    <span>Broken Site (With Healing - AI)</span>
+                                    <span id="pct-broken-heal">-%</span>
+                                </div>
+                                <div class="comp-bar-bg">
+                                    <div class="comp-bar-fill broken-heal" id="fill-broken-heal" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 1.2rem; font-weight: 600;">Run Evaluations Suite Offline</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem;">
+                            Executes 20 predefined tests in parallel iterations across all four system states to measure semantic mapping effectiveness, locator recovery confidence, and false-healing rates.
+                        </p>
+                        <button id="run-eval-btn" class="btn" style="background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);">
+                            ⚡ Run Full Evaluation Suite
+                        </button>
+                        <div class="progress-bar-container" id="eval-progress">
+                            <div class="progress-bar-fill" id="eval-progress-fill"></div>
+                        </div>
+                        <div id="eval-logs" class="inline-logs" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title">Predefined Test Scenarios Suite</div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Index</th>
+                                <th>Test Scenario Instruction</th>
+                                <th style="width: 150px;">Validation Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eval-table-body">
+                            <tr>
+                                <td colspan="3" style="text-align: center; color: var(--text-secondary); font-style: italic;">Loading test cases details...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history-tab" class="tab-panel">
+            <h1 class="header-title">Execution Runs History</h1>
+            <p class="header-subtitle">Browse through historical test reports, metrics summaries, and self-healing log telemetry.</p>
+            
+            <div class="section-card">
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date/Time</th>
+                                <th>Test Scenario Text</th>
+                                <th>Result</th>
+                                <th>Duration</th>
+                                <th>Healing Events</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-secondary); font-style: italic;">No execution runs saved yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUGGESTIONS = {
+            1: "Navigate to http://localhost:5000/demo/login, type 'admin' in the username, type 'admin123' in the password, click 'Sign In', and assert page displays 'Welcome back'",
+            2: "Open http://localhost:5000/demo/login, fill username field with 'admin', fill password field with 'admin123', click login button, check if the welcome greeting contains 'Admin', and click 'Logout'"
+        };
+
+        function selectSuggestion(id) {
+            document.getElementById('test-description').value = SUGGESTIONS[id];
+        }
+
+        function switchTab(tabId) {
+            // Remove active class from tabs
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            // Activate selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Find nav item by index or mapping
+            const items = document.querySelectorAll('.nav-item');
+            if (tabId === 'run-test-tab') items[0].classList.add('active');
+            if (tabId === 'eval-tab') items[1].classList.add('active');
+            if (tabId === 'history-tab') items[2].classList.add('active');
+
+            // Load data when entering tabs
+            if (tabId === 'history-tab') {
+                loadHistory();
+            }
+            if (tabId === 'eval-tab') {
+                loadEvaluationData();
+            }
+        }
+
+        // Run interactive test submission
+        let activePollInterval = null;
+        document.getElementById('run-test-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const scenario = document.getElementById('test-description').value.trim();
+            if (!scenario) {
+                alert('Please describe a test scenario!');
+                return;
+            }
+
+            const targetMode = document.getElementById('target-mode').value;
+            const selfHealing = document.getElementById('self-healing-toggle').checked;
+            const submitBtn = document.getElementById('submit-run-btn');
+            
+            // Reset Console
+            const consoleBox = document.getElementById('live-console');
+            consoleBox.innerHTML = '<div class="terminal-log-line system">> Registering test run with server...</div>';
+            
+            // Disable button
+            submitBtn.disabled = true;
+            
+            fetch('/api/run-test', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    test_case_text: scenario,
+                    broken: targetMode === 'broken',
+                    self_healing_enabled: selfHealing
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    appendConsoleLine('System error registering run: ' + data.error, 'error');
+                    submitBtn.disabled = false;
+                    return;
+                }
+                
+                const runId = data.run_id;
+                appendConsoleLine('Run registered. Initializing Playwright and Ollama models...', 'system');
+                
+                // Poll status
+                let lastLogIndex = 0;
+                activePollInterval = setInterval(() => {
+                    fetch(`/api/test-status/${runId}`)
+                    .then(res => res.json())
+                    .then(statusData => {
+                        // Print new logs
+                        if (statusData.logs && statusData.logs.length > lastLogIndex) {
+                            for (let i = lastLogIndex; i < statusData.logs.length; i++) {
+                                const logStr = statusData.logs[i];
+                                let type = 'system';
+                                if (logStr.includes('passed') || logStr.includes('PASSED') || logStr.includes('MATCH FOUND')) type = 'success';
+                                if (logStr.includes('failed') || logStr.includes('FAILED') || logStr.includes('error')) type = 'error';
+                                if (logStr.includes('healing') || logStr.includes('Retry') || logStr.includes('Broken')) type = 'warning';
+                                appendConsoleLine(logStr, type);
+                            }
+                            lastLogIndex = statusData.logs.length;
+                        }
+
+                        if (statusData.status === 'completed' || statusData.status === 'failed') {
+                            clearInterval(activePollInterval);
+                            submitBtn.disabled = false;
+                            
+                            // Display Summary
+                            const result = statusData.result;
+                            document.getElementById('result-summary-placeholder').style.display = 'none';
+                            const summaryBox = document.getElementById('result-summary-box');
+                            summaryBox.style.display = 'block';
+                            
+                            const badge = document.getElementById('summary-status-badge');
+                            badge.textContent = result.status;
+                            badge.className = 'badge-status ' + (result.status === 'PASSED' ? 'passed' : 'failed');
+                            
+                            document.getElementById('summary-run-id').textContent = result.run_id;
+                            document.getElementById('summary-duration').textContent = result.duration.toFixed(2) + ' seconds';
+                            document.getElementById('summary-healed-count').textContent = result.healing_logs.length;
+                            
+                            const reportLink = document.getElementById('summary-report-link');
+                            if (result.report_file) {
+                                reportLink.href = `/static/reports/${result.report_file}`;
+                                reportLink.style.display = 'inline-flex';
+                            } else {
+                                reportLink.style.display = 'none';
+                            }
+                            
+                            appendConsoleLine('Execution finished. Status: ' + result.status, result.status === 'PASSED' ? 'success' : 'error');
+                        }
+                    })
+                    .catch(err => {
+                        clearInterval(activePollInterval);
+                        appendConsoleLine('Error polling status: ' + err, 'error');
+                        submitBtn.disabled = false;
+                    });
+                }, 1000);
+            })
+            .catch(err => {
+                appendConsoleLine('Error initiating run: ' + err, 'error');
+                submitBtn.disabled = false;
+            });
+        });
+
+        function appendConsoleLine(text, type = 'system') {
+            const consoleBox = document.getElementById('live-console');
+            const div = document.createElement('div');
+            div.className = 'terminal-log-line ' + type;
+            div.textContent = `> [${new Date().toLocaleTimeString()}] ${text}`;
+            consoleBox.appendChild(div);
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+
+        // Load runs history
+        function loadHistory() {
+            const tableBody = document.getElementById('history-table-body');
+            fetch('/api/history')
+            .then(res => res.json())
+            .then(data => {
+                if (!data || data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-secondary); font-style: italic;">No execution runs saved yet.</td></tr>`;
+                    return;
+                }
+                
+                tableBody.innerHTML = data.map(run => {
+                    const statusClass = run.status === 'PASSED' ? 'passed' : 'failed';
+                    const reportCell = run.report_file 
+                        ? `<a class="view-report-link" href="/static/reports/${run.report_file}" target="_blank">HTML Report</a>` 
+                        : '-';
+                    return `
+                        <tr>
+                            <td>${run.timestamp}</td>
+                            <td style="font-size: 0.85rem; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${run.test_case_text}</td>
+                            <td><span class="badge-status ${statusClass}">${run.status}</span></td>
+                            <td style="font-family: 'JetBrains Mono', monospace;">${run.duration.toFixed(2)}s</td>
+                            <td style="text-align: center; font-weight: 600;">${run.healing_logs.length}</td>
+                            <td>${reportCell}</td>
+                        </tr>
+                    `;
+                }).join('');
+            })
+            .catch(err => {
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--accent-red);">Error loading history: ${err}</td></tr>`;
+            });
+        }
+
+        // Load metrics and test cases
+        function loadEvaluationData() {
+            // Load cases first
+            const tableBody = document.getElementById('eval-table-body');
+            fetch('/api/eval-cases')
+            .then(res => res.json())
+            .then(cases => {
+                tableBody.innerHTML = cases.map((tc, idx) => {
+                    return `
+                        <tr>
+                            <td style="font-family: 'JetBrains Mono', monospace; font-weight: 600;">TC-${String(idx+1).padStart(2, '0')}</td>
+                            <td>${tc.text}</td>
+                            <td style="font-size: 0.85rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">${tc.assertions.join(', ')}</td>
+                        </tr>
+                    `;
+                }).join('');
+                document.getElementById('eval-total-cases').textContent = cases.length;
+            })
+            .catch(err => {
+                tableBody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--accent-red);">Error loading scenarios: ${err}</td></tr>`;
+            });
+
+            // Load results
+            fetch('/api/results')
+            .then(res => res.json())
+            .then(data => {
+                if (data.empty) {
+                    document.getElementById('eval-pass-with').textContent = 'N/A';
+                    document.getElementById('eval-pass-without').textContent = 'N/A';
+                    document.getElementById('eval-avg-confidence').textContent = 'N/A';
+                    
+                    document.getElementById('pct-broken-heal').textContent = '-%';
+                    document.getElementById('fill-broken-heal').style.width = '0%';
+                    return;
+                }
+
+                // Render metrics
+                document.getElementById('eval-pass-with').textContent = (data.with_healing.pass_rate * 100).toFixed(0) + '%';
+                document.getElementById('eval-pass-without').textContent = (data.without_healing.pass_rate * 100).toFixed(0) + '%';
+                document.getElementById('eval-avg-confidence').textContent = (data.with_healing.avg_healing_confidence * 100).toFixed(0) + '%';
+
+                // Update charts
+                document.getElementById('pct-normal-no-heal').textContent = (data.without_healing.normal_pass_rate * 100).toFixed(0) + '%';
+                document.getElementById('fill-normal-no-heal').style.width = (data.without_healing.normal_pass_rate * 100) + '%';
+
+                document.getElementById('pct-broken-no-heal').textContent = (data.without_healing.broken_pass_rate * 100).toFixed(0) + '%';
+                document.getElementById('fill-broken-no-heal').style.width = (data.without_healing.broken_pass_rate * 100) + '%';
+
+                document.getElementById('pct-normal-heal').textContent = (data.with_healing.normal_pass_rate * 100).toFixed(0) + '%';
+                document.getElementById('fill-normal-heal').style.width = (data.with_healing.normal_pass_rate * 100) + '%';
+
+                document.getElementById('pct-broken-heal').textContent = (data.with_healing.broken_pass_rate * 100).toFixed(0) + '%';
+                document.getElementById('fill-broken-heal').style.width = (data.with_healing.broken_pass_rate * 100) + '%';
+            })
+            .catch(err => {
+                console.error('Error fetching evaluation results:', err);
+            });
+        }
+
+        // Run evaluation suite trigger
+        document.getElementById('run-eval-btn').addEventListener('click', function() {
+            const btn = document.getElementById('run-eval-btn');
+            const progress = document.getElementById('eval-progress');
+            const fill = document.getElementById('eval-progress-fill');
+            const logs = document.getElementById('eval-logs');
+
+            btn.disabled = true;
+            progress.style.display = 'block';
+            fill.style.width = '0%';
+            logs.style.display = 'block';
+            logs.innerHTML = 'Initializing evaluation suite...<br>';
+
+            fetch('/api/run-evaluation', { method: 'POST' })
+            .then(res => res.json())
+            .then(reg => {
+                const runId = reg.eval_run_id;
+                
+                // Poll progress
+                const evalInterval = setInterval(() => {
+                    fetch(`/api/eval-status/${runId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        // Print progress logs
+                        if (data.logs) {
+                            logs.innerHTML = data.logs.join('<br>') + '<br>';
+                            logs.scrollTop = logs.scrollHeight;
+                        }
+
+                        // Compute progress percentage
+                        const current = data.completed_count || 0;
+                        const total = data.total_count || 40; // 20 cases * 2 states (with vs without healing, wait actually run_eval tests normal+broken for with and normal+broken for without, making it 80 total? Or 40 runs? We will inspect run_eval soon). Let's let the backend output its exact count.
+                        const pct = Math.min((current / total) * 100, 100);
+                        fill.style.width = pct + '%';
+
+                        if (data.status === 'completed' || data.status === 'failed') {
+                            clearInterval(evalInterval);
+                            btn.disabled = false;
+                            logs.innerHTML += `<br><strong>Evaluation completed!</strong>`;
+                            loadEvaluationData();
+                        }
+                    })
+                    .catch(err => {
+                        clearInterval(evalInterval);
+                        btn.disabled = false;
+                        logs.innerHTML += `<br><span style="color:var(--accent-red);">Error: ${err}</span>`;
+                    });
+                }, 1500);
+            })
+            .catch(err => {
+                btn.disabled = false;
+                logs.innerHTML += `<br><span style="color:var(--accent-red);">API Error: ${err}</span>`;
+            });
+        });
+    </script>
+</body>
+</html>

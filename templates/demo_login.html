@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Target Login</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #1f2937;
+        }
+        .login-card {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 400px;
+        }
+        .title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.35rem;
+            color: #374151;
+        }
+        input {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.15s ease-in-out;
+        }
+        input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.15s ease-in-out;
+            margin-top: 0.5rem;
+        }
+        /* Normal page styles */
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        /* Broken page styles */
+        .action-btn {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .action-btn:hover {
+            background-color: #4338ca;
+        }
+        .alert-error {
+            background-color: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #b91c1c;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            margin-bottom: 1.25rem;
+            text-align: center;
+        }
+        .mode-badge {
+            display: block;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2 class="title">Welcome Back</h2>
+        <p class="subtitle">Please log in to your account</p>
+        
+        {% if error %}
+        <div class="alert-error">{{ error }}</div>
+        {% endif %}
+        
+        <form action="/demo/login{% if broken %}?broken=true{% endif %}" method="POST">
+            {% if not broken %}
+            <!-- Normal Target Structure -->
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter Username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter Password" required>
+            </div>
+            <button type="submit" id="login-btn" class="btn-primary">Sign In</button>
+            
+            {% else %}
+            <!-- Broken Target Structure: IDs, names, placeholders, labels, and classes are altered -->
+            <div class="form-group">
+                <!-- Label for tag points to broken element but username keyword is missing -->
+                <label for="usr_login">Account Sign In</label>
+                <input type="text" id="usr_login" name="usr_login" placeholder="Email or Account ID" required>
+            </div>
+            <div class="form-group">
+                <label for="pass_key">Security Credentials</label>
+                <input type="password" id="pass_key" name="pass_key" placeholder="Security Code" required>
+            </div>
+            <button type="submit" id="submit-action" class="action-btn">Proceed</button>
+            {% endif %}
+        </form>
+
+        <span class="mode-badge" style="color: {% if broken %}#4f46e5{% else %}#3b82f6{% endif %};">
+            Target State: {% if broken %}BROKEN (ELEMENTS CHANGED){% else %}NORMAL{% endif %}
+        </span>
+    </div>
+</body>
+</html>

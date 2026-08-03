@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Target Dashboard</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            color: #1f2937;
+        }
+        .navbar {
+            background-color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .logo {
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: #3b82f6;
+        }
+        .logout-btn-normal {
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid #fee2e2;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            background-color: #fff5f5;
+            transition: all 0.15s;
+        }
+        .logout-btn-normal:hover {
+            background-color: #fee2e2;
+        }
+        .logout-btn-broken {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            background-color: #374151;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.15s;
+        }
+        .logout-btn-broken:hover {
+            background-color: #1f2937;
+        }
+        .container {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+        .welcome-card {
+            background-color: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .status-badge {
+            display: inline-block;
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #10b981;
+            background-color: #ecfdf5;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">AppPortal</div>
+        <div>
+            {% if not broken %}
+            <!-- Normal Logout Selector -->
+            <a href="/demo/logout" id="logout-link" class="logout-btn-normal">Logout</a>
+            {% else %}
+            <!-- Broken Logout Selector -->
+            <a href="/demo/logout?broken=true" id="exit-btn" class="logout-btn-broken">Sign Out</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-card">
+            {% if not broken %}
+            <!-- Normal Welcome Selector -->
+            <h1 id="welcome-message">Welcome back, Admin!</h1>
+            {% else %}
+            <!-- Broken Welcome Selector -->
+            <h1 id="user-greeting">Welcome back Admin!</h1>
+            {% endif %}
+            
+            <p>You have successfully authenticated to the system dashboard. Traditional automated tests without self-healing capability would fail here if selectors changed.</p>
+            <div class="status-badge">Authenticated Session</div>
+        </div>
+    </div>
+</body>
+</html>

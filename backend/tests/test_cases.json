@@ -1,0 +1,82 @@
+[
+  {
+    "text": "Navigate to http://localhost:5000/demo/login, type 'admin' in the username field, type 'admin123' in the password field, click the 'Sign In' button, and verify the page contains 'Welcome back, Admin!'",
+    "assertions": ["Welcome back, Admin!"]
+  },
+  {
+    "text": "Open http://localhost:5000/demo/login, fill username with 'admin', fill password with 'admin123', click Sign In, and check if welcome greeting is visible",
+    "assertions": ["Welcome back, Admin!"]
+  },
+  {
+    "text": "Go to the login screen http://localhost:5000/demo/login, type 'admin' in the username input, type 'admin123' in the password input, press Sign In, and verify 'Welcome back' is present",
+    "assertions": ["Welcome back"]
+  },
+  {
+    "text": "Open http://localhost:5000/demo/login, type 'admin' for the username input field, type 'admin123' for the password input field, click 'Sign In', and confirm dashboard loaded",
+    "assertions": ["Welcome back, Admin!"]
+  },
+  {
+    "text": "Navigate to http://localhost:5000/demo/login, fill 'admin' into username, fill 'admin123' into password, submit the form with Sign In button, and verify authentication succeeded",
+    "assertions": ["Welcome back"]
+  },
+  {
+    "text": "Go to http://localhost:5000/demo/login, enter 'admin' in the account input, enter 'admin123' in the password credentials, click the login action, and verify the welcome heading",
+    "assertions": ["Welcome back, Admin!"]
+  },
+  {
+    "text": "Navigate to http://localhost:5000/demo/login, write 'admin' in username textbox, write 'admin123' in password textbox, click Sign In, and check welcome message",
+    "assertions": ["Welcome back, Admin!"]
+  },
+  {
+    "text": "Open http://localhost:5000/demo/login, type 'admin' in user, type 'admin123' in pass, click sign in, and verify the header says Welcome",
+    "assertions": ["Welcome"]
+  },
+  {
+    "text": "Go to http://localhost:5000/demo/login, log in with username 'admin' and password 'admin123', check that welcome header is shown on dashboard",
+    "assertions": ["Welcome back, Admin!"]
+  },
+  {
+    "text": "Go to http://localhost:5000/demo/login, type 'admin' into the username text field, enter 'admin123' in password field, click Sign In button, and verify logout link is visible",
+    "assertions": ["Logout"]
+  },
+  {
+    "text": "Navigate to http://localhost:5000/demo/login, enter username 'admin' and password 'admin123', click login button, check dashboard page welcome text, and then click Logout",
+    "assertions": ["Welcome back, Admin!"]
+  },
+  {
+    "text": "Open http://localhost:5000/demo/login, fill username input with 'admin', fill password input with 'admin123', submit, and then click the logout link",
+    "assertions": ["Logout"]
+  },
+  {
+    "text": "Go to http://localhost:5000/demo/login, enter account name 'admin', enter security code 'admin123', click Sign In, and click the logout button to exit",
+    "assertions": ["Logout"]
+  },
+  {
+    "text": "Open http://localhost:5000/demo/login, log in with admin/admin123 credentials, check welcome message on dashboard, and perform logout",
+    "assertions": ["Welcome back, Admin!"]
+  },
+  {
+    "text": "Navigate to http://localhost:5000/demo/login, type 'admin' in username input field, type 'admin123' in password input field, submit form, verify URL contains dashboard",
+    "assertions": ["/demo/dashboard"]
+  },
+  {
+    "text": "Open http://localhost:5000/demo/login, fill username field with 'admin', fill password field with 'admin123', click login, and assert the URL contains dashboard",
+    "assertions": ["/demo/dashboard"]
+  },
+  {
+    "text": "Go to http://localhost:5000/demo/login, type 'admin' in username field, type 'admin123' in password, click Sign In, check if welcome banner is loaded, and exit by clicking Logout",
+    "assertions": ["Welcome back", "Logout"]
+  },
+  {
+    "text": "Open http://localhost:5000/demo/login, login using username 'admin' and password 'admin123', verify welcome message is displayed, and exit application",
+    "assertions": ["Welcome back"]
+  },
+  {
+    "text": "Go to http://localhost:5000/demo/login, write username 'admin', write password 'admin123', submit, verify welcome back, and click the logout link",
+    "assertions": ["Welcome back, Admin!", "Logout"]
+  },
+  {
+    "text": "Navigate to http://localhost:5000/demo/login, sign in with 'admin' and 'admin123', confirm you see welcome header on the dashboard",
+    "assertions": ["Welcome back, Admin!"]
+  }
+]
