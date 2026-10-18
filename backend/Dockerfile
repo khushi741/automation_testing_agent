@@ -2,6 +2,9 @@ FROM mcr.microsoft.com/playwright/python:v1.52.0-noble
 
 WORKDIR /app
 
+# Ensure git is installed for cloning repos
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+
 # Install lightweight CPU-only PyTorch first to prevent multi-GB CUDA downloads on Render
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 

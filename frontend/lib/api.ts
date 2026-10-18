@@ -1,11 +1,22 @@
-let rawApiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-if (rawApiBase && !rawApiBase.startsWith("http://") && !rawApiBase.startsWith("https://")) {
-  rawApiBase = `https://${rawApiBase}`;
+export function getApiBase(): string {
+  let url = process.env.NEXT_PUBLIC_API_URL;
+  if (!url || url.includes("localhost")) {
+    if (typeof window !== "undefined" && window.location.hostname.includes("onrender.com")) {
+      return "https://automation-testing-agent-backend.onrender.com";
+    }
+  }
+  if (!url) {
+    url = "http://localhost:8080";
+  }
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    url = `https://${url}`;
+  }
+  return url.replace(/\/$/, "");
 }
-const API_BASE = rawApiBase.replace(/\/$/, "");
 
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const base = getApiBase();
+  const res = await fetch(`${base}${path}`, {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
@@ -200,7 +211,7 @@ export async function getEvalCases(): Promise<Record<string, unknown>[]> {
 // ─── Screenshots ─────────────────────────────────────────────────────────────
 
 export function screenshotUrl(filename: string): string {
-  return `${API_BASE}/api/screenshots/${filename}`;
+  return `${getApiBase()}/api/screenshots/${filename}`;
 }
 
 // ─── Health ──────────────────────────────────────────────────────────────────

@@ -82,10 +82,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS — allow Next.js frontend
+# CORS — allow Next.js frontend from any origin (Render, Vercel, localhost)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origin_regex=r".*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
