@@ -60,8 +60,9 @@ export default function HomePage() {
 
     let currentLine = 0;
     const interval = setInterval(() => {
-      if (currentLine < lines.length) {
-        setConsoleLogs((prev) => [...prev, lines[currentLine]]);
+      if (currentLine < lines.length && lines[currentLine] !== undefined) {
+        const nextLine = lines[currentLine];
+        setConsoleLogs((prev) => [...prev, nextLine]);
         currentLine++;
       } else {
         clearInterval(interval);
@@ -216,14 +217,30 @@ export default function HomePage() {
             </div>
             {/* Logs Area */}
             <div className="p-6 bg-slate-950/40 min-height-[240px] font-mono text-sm leading-relaxed text-slate-300 overflow-y-auto max-h-[300px]">
-              {consoleLogs.map((log, index) => (
-                <div key={index} className="flex gap-2">
-                  <span className="text-purple-500/50 select-none">›</span>
-                  <span className={log.startsWith("$") ? "text-purple-400 font-semibold" : log.includes("Passed") || log.includes("Success") ? "text-emerald-400" : log.includes("Healed") ? "text-yellow-400" : ""}>
-                    {log}
-                  </span>
-                </div>
-              ))}
+              {consoleLogs.map((log, index) => {
+                if (!log || typeof log !== "string") return null;
+                const isCmd = log.startsWith("$");
+                const isSuccess = log.includes("Passed") || log.includes("Success");
+                const isHealed = log.includes("Healed");
+                return (
+                  <div key={index} className="flex gap-2">
+                    <span className="text-purple-500/50 select-none">›</span>
+                    <span
+                      className={
+                        isCmd
+                          ? "text-purple-400 font-semibold"
+                          : isSuccess
+                            ? "text-emerald-400"
+                            : isHealed
+                              ? "text-yellow-400"
+                              : ""
+                      }
+                    >
+                      {log}
+                    </span>
+                  </div>
+                );
+              })}
               <span className="inline-block w-2 h-4 bg-purple-400 animate-blink ml-1 align-middle" />
             </div>
           </div>
