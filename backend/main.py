@@ -658,6 +658,7 @@ async def get_screenshot(filename: str):
 # ─── Health ───────────────────────────────────────────────────────────────────
 
 @app.get("/api/health")
+@app.get("/health")
 async def health():
     return {"status": "ok", "version": "2.0.0"}
 
