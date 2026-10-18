@@ -4,9 +4,9 @@ import Link from "next/link";
 import { NavLinks } from "./nav-links";
 
 export const metadata: Metadata = {
-  title: "AI Self-Healing Test Agent",
+  title: "HealAgent — AI Self-Healing Browser Test Automation",
   description:
-    "AI-powered browser test automation with self-healing locators, powered by local LLM inference",
+    "AI-powered browser test automation with self-healing locators, powered by local LLM and embedding vector models",
 };
 
 export default function RootLayout({
@@ -19,18 +19,30 @@ export default function RootLayout({
       <head>
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased text-[#0f2e22]">
-        {/* Navigation */}
-        <nav className="sticky top-0 z-50 border-b border-emerald-100/90 bg-white/85 backdrop-blur-xl shadow-[0_2px_12px_rgba(16,185,129,0.04)]">
+      <body className="antialiased text-[#0a291e] selection:bg-emerald-200 selection:text-emerald-950 min-h-screen relative overflow-x-hidden">
+        
+        {/* Top Micro-Banner */}
+        <div className="relative z-50 bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 text-white text-xs font-medium py-1.5 px-4 text-center shadow-xs overflow-hidden">
+          <div className="absolute inset-0 bg-white/10 animate-shimmer" />
+          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-300 animate-blink" />
+            <span>Next-Gen Test Automation: AI route discovery & self-healing selector recovery</span>
+            <span className="hidden sm:inline opacity-80">• Free & open on Render</span>
+          </div>
+        </div>
+
+        {/* Navigation Bar */}
+        <nav className="sticky top-0 z-40 border-b border-emerald-200/70 bg-white/80 backdrop-blur-2xl shadow-[0_4px_20px_rgba(16,185,129,0.06)]">
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+              <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 via-teal-500 to-green-600 flex items-center justify-center shadow-md shadow-emerald-500/30 group-hover:scale-105 transition-all">
+                <div className="absolute -inset-0.5 rounded-xl bg-emerald-400/40 blur-xs opacity-70 group-hover:opacity-100 transition-opacity" />
                 <svg
-                  className="w-4 h-4 text-white"
+                  className="relative w-5 h-5 text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -43,17 +55,29 @@ export default function RootLayout({
                   />
                 </svg>
               </div>
-              <span className="text-lg font-bold bg-gradient-to-r from-emerald-700 via-teal-700 to-green-600 bg-clip-text text-transparent">
-                HealAgent
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-900 via-teal-800 to-green-800 bg-clip-text text-transparent">
+                  HealAgent
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100/90 text-emerald-800 border border-emerald-300 shadow-2xs">
+                  v2.0
+                </span>
+              </div>
             </Link>
 
-            <NavLinks />
+            <div className="flex items-center gap-4">
+              <NavLinks />
+              
+              <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50/90 border border-emerald-200/80 text-xs font-semibold text-emerald-800 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-ring" />
+                <span>Engine Online</span>
+              </div>
+            </div>
           </div>
         </nav>
 
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-6 py-8">{children}</main>
+        <main className="max-w-7xl mx-auto px-6 py-8 relative z-10">{children}</main>
       </body>
     </html>
   );

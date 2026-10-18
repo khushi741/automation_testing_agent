@@ -35,6 +35,7 @@ export default function HomePage() {
   const [error, setError] = useState("");
   const [generating, setGenerating] = useState(false);
   const [runStarted, setRunStarted] = useState(false);
+  const [activeTab, setActiveTab] = useState<"terminal" | "synthesizer" | "healing">("terminal");
   const pollRef = useRef<NodeJS.Timeout | null>(null);
   const connectSectionRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -43,22 +44,22 @@ export default function HomePage() {
   const [consoleLogs, setConsoleLogs] = useState<string[]>([]);
   useEffect(() => {
     const lines = [
-      "$ autotest analyze https://github.com/khushi/todo-app",
-      "Cloning repository into scratch directory... Success (1.8s)",
-      "Detecting project framework... Next.js (App Router) detected",
-      "Extracting application routes... Found 4 active routes",
-      "  - GET  / (Dashboard)",
-      "  - GET  /login (Sign In)",
-      "  - GET  /settings (User Settings)",
-      "  - GET  /tasks (Task List)",
+      "$ autotest analyze https://github.com/khushi741/automation_testing_agent",
+      "Cloning repository into scratch directory... Success (1.4s)",
+      "Detecting project framework... FastAPI + Next.js (Full Stack)",
+      "Extracting application routes... Found 6 active endpoints",
+      "  - GET  /api/health (Service Health)",
+      "  - GET  /api/repos (Repository Registry)",
+      "  - POST /api/test-runs (Test Runner Trigger)",
+      "  - GET  /api/eval-results (Self-Healing Benchmark)",
       "Running AI Test Case Synthesizer...",
-      "Successfully generated 12 natural language test scenarios",
+      "Synthesized 12 natural language interaction scenarios",
       "Executing Playwright runner with self-healing engine...",
-      "  [1/4] GET /login -> Passed",
-      "  [2/4] GET /tasks -> Passed",
-      "  [3/4] GET /settings -> Healed (button selector changed: matched login_submit with 92% confidence)",
-      "  [4/4] GET / -> Passed",
-      "All tests completed. Generating execution report... Done!"
+      "  [1/4] GET /api/health -> Passed (42ms)",
+      "  [2/4] GET /api/repos -> Passed (118ms)",
+      "  [3/4] POST /api/test-runs -> Healed (button selector mutated: matched #run-btn with 94.6% confidence)",
+      "  [4/4] GET / -> Passed (204ms)",
+      "Self-healing accuracy: 100% • Zero manual test maintenance required!"
     ];
 
     let currentLine = 0;
@@ -70,7 +71,7 @@ export default function HomePage() {
       } else {
         clearInterval(interval);
       }
-    }, 1500);
+    }, 1400);
 
     return () => clearInterval(interval);
   }, []);
@@ -166,6 +167,18 @@ export default function HomePage() {
     }, 300);
   };
 
+  const handlePasteClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        setUrl(text.trim());
+        inputRef.current?.focus();
+      }
+    } catch {
+      // ignore
+    }
+  };
+
   useEffect(() => {
     const checkHashAndScroll = () => {
       if (typeof window !== "undefined" && window.location.hash === "#connect") {
@@ -182,156 +195,319 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-24 pb-20 relative">
       
       {/* ─── Hero Section ─── */}
-      <section className="relative flex flex-col items-center justify-center text-center pt-10 pb-8 px-4 overflow-hidden">
-        {/* Soft emerald dot-grid ambient background */}
-        <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(#10b981_1.2px,transparent_1.2px)] [background-size:26px_26px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black_0%,transparent_100%)] z-0"></div>
+      <section className="relative flex flex-col items-center justify-center text-center pt-8 pb-4 px-4 overflow-hidden">
+        
+        {/* Decorative Grid Mesh */}
+        <div className="absolute inset-0 bg-grid-mesh opacity-60 pointer-events-none [mask-image:radial-gradient(ellipse_70%_60%_at_50%_10%,black_30%,transparent_100%)] z-0" />
+
+        {/* Ambient Top Glow Orbs */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-80 bg-gradient-to-b from-emerald-300/30 via-teal-200/20 to-transparent blur-3xl pointer-events-none -z-10" />
 
         <div className="relative z-10 max-w-4xl mx-auto space-y-6">
-          {/* Badge */}
+          
+          {/* Top Pill Badge */}
           <div className="flex justify-center">
-            <span className="relative overflow-hidden inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 shadow-xs">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-blink" />
-              Powered by local LLM + Playwright — now in beta
-            </span>
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/95 border border-emerald-300/80 shadow-[0_4px_20px_rgba(16,185,129,0.18)] text-xs font-semibold text-emerald-950 backdrop-blur-md">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span>Next-Gen Autonomous Browser Testing</span>
+              <span className="text-emerald-700 font-bold bg-emerald-100/80 px-2 py-0.5 rounded-full text-[10px]">
+                v2.0 Beta
+              </span>
+            </div>
           </div>
 
           {/* Heading */}
-          <h1 className="font-serif text-6xl md:text-8xl tracking-tight leading-[0.95] text-[#0f2e22] max-w-3xl mx-auto">
-            Connect repo.<br />
-            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 bg-clip-text text-transparent italic">
-              AI tests it.
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-[1.0] text-[#0a291e]">
+            Autonomous tests.<br />
+            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-500 bg-clip-text text-transparent italic">
+              Zero broken locators.
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-gray-600 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
-            Connect your GitHub repository, let our AI generate a complete test suite, and watch Playwright execute them locally — with self-healing.
+          <p className="text-emerald-950/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-normal">
+            Connect any GitHub repository. Our agent scans framework routes, generates complete browser test suites, and heals mutated selectors using local embedding models.
           </p>
 
           {/* Action Buttons */}
-          <div className="flex gap-4 justify-center flex-wrap pt-4">
+          <div className="flex gap-4 justify-center flex-wrap pt-2">
             <button
               onClick={scrollToConnect}
-              className="px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-600/20 transform hover:-translate-y-0.5"
+              className="px-8 py-3.5 btn-emerald-glow font-bold rounded-xl text-base flex items-center gap-2 cursor-pointer"
             >
-              ⬡ Connect GitHub repo →
+              <span>⚡ Connect GitHub Repo</span>
+              <span>→</span>
             </button>
             <a
               href="/evaluation"
-              className="px-8 py-3.5 bg-white hover:bg-emerald-50/70 text-emerald-900 border border-emerald-200 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-xs hover:border-emerald-300"
+              className="px-8 py-3.5 btn-frosted-green font-bold rounded-xl text-base flex items-center justify-center gap-2"
             >
-              ▶ View Evaluation Suite
+              <span>📊 View 20-Case Benchmark</span>
             </a>
+          </div>
+
+          {/* Quick Demo Repo Pills (1-Click Try It!) */}
+          <div className="flex items-center justify-center gap-2 flex-wrap pt-3 text-xs">
+            <span className="text-emerald-800 font-semibold flex items-center gap-1">
+              <span>⚡</span> Quick Test:
+            </span>
+            {[
+              {
+                label: "Current Repo (Full-Stack)",
+                url: "https://github.com/khushi741/automation_testing_agent",
+              },
+              {
+                label: "FastAPI Sample",
+                url: "https://github.com/tiangolo/fastapi",
+              },
+              {
+                label: "Next.js Demo",
+                url: "https://github.com/vercel/next-learn-starter",
+              },
+            ].map((sample) => (
+              <button
+                key={sample.label}
+                type="button"
+                onClick={() => {
+                  setUrl(sample.url);
+                  scrollToConnect();
+                }}
+                className="px-3 py-1 rounded-full bg-white/90 hover:bg-emerald-50 text-emerald-900 border border-emerald-300/80 font-mono text-[11px] font-medium shadow-2xs hover:border-emerald-500 transition-all cursor-pointer flex items-center gap-1"
+              >
+                <span className="text-emerald-600 font-bold">+</span>
+                <span>{sample.label}</span>
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Mock Terminal Console */}
-        <div className="relative w-full max-w-3xl mt-16 mx-auto z-10">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-emerald-500/15 to-teal-500/10 filter blur-xl -z-10"></div>
-          <div className="glass-card border-emerald-200/80 overflow-hidden text-left shadow-xl bg-white/95">
-            {/* Header bar */}
-            <div className="flex items-center gap-2 px-5 py-3.5 bg-emerald-50/80 border-b border-emerald-100">
-              <span className="w-3 h-3 rounded-full bg-rose-400 inline-block" />
-              <span className="w-3 h-3 rounded-full bg-amber-400 inline-block" />
-              <span className="w-3 h-3 rounded-full bg-emerald-400 inline-block" />
-              <span className="font-mono text-xs text-emerald-800/80 font-medium ml-3">autotest — zsh</span>
+        {/* ─── Ultra-Cool Studio IDE Terminal ─── */}
+        <div className="relative w-full max-w-4xl mt-14 mx-auto z-10">
+          
+          {/* Card Ambient Glow Aura */}
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-emerald-400/30 via-teal-300/30 to-green-400/30 blur-xl opacity-70 -z-10" />
+
+          <div className="glass-card border-emerald-300/80 overflow-hidden text-left shadow-2xl bg-white/95 rounded-2xl">
+            
+            {/* Window Header Bar with Tabs */}
+            <div className="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-emerald-50/90 via-teal-50/80 to-emerald-50/90 border-b border-emerald-200/80">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-rose-400/90 inline-block shadow-2xs" />
+                <span className="w-3 h-3 rounded-full bg-amber-400/90 inline-block shadow-2xs" />
+                <span className="w-3 h-3 rounded-full bg-emerald-500/90 inline-block shadow-2xs" />
+                
+                {/* Frosted Tabs */}
+                <div className="ml-4 flex items-center gap-1">
+                  <button
+                    onClick={() => setActiveTab("terminal")}
+                    className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-all ${
+                      activeTab === "terminal"
+                        ? "bg-white text-emerald-950 font-bold shadow-xs border border-emerald-200"
+                        : "text-emerald-800/70 hover:text-emerald-950 hover:bg-white/50"
+                    }`}
+                  >
+                    ▸ live-runner.zsh
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("synthesizer")}
+                    className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-all ${
+                      activeTab === "synthesizer"
+                        ? "bg-white text-emerald-950 font-bold shadow-xs border border-emerald-200"
+                        : "text-emerald-800/70 hover:text-emerald-950 hover:bg-white/50"
+                    }`}
+                  >
+                    ⚙ ai-synthesizer.json
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("healing")}
+                    className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-all ${
+                      activeTab === "healing"
+                        ? "bg-white text-emerald-950 font-bold shadow-xs border border-emerald-200"
+                        : "text-emerald-800/70 hover:text-emerald-950 hover:bg-white/50"
+                    }`}
+                  >
+                    🛡️ self-healing-matrix
+                  </button>
+                </div>
+              </div>
+
+              {/* Status Indicator */}
+              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-[11px] font-semibold text-emerald-900 border border-emerald-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                <span>Playwright Live</span>
+              </div>
             </div>
-            {/* Logs Area */}
-            <div className="p-6 bg-white min-height-[240px] font-mono text-sm leading-relaxed text-gray-700 overflow-y-auto max-h-[300px]">
-              {consoleLogs.map((log, index) => {
-                if (!log || typeof log !== "string") return null;
-                const isCmd = log.startsWith("$");
-                const isSuccess = log.includes("Passed") || log.includes("Success");
-                const isHealed = log.includes("Healed");
-                return (
-                  <div key={index} className="flex gap-2">
-                    <span className="text-emerald-500 select-none font-bold">›</span>
-                    <span
-                      className={
-                        isCmd
-                          ? "text-teal-900 font-bold"
-                          : isSuccess
-                            ? "text-emerald-700 font-medium"
-                            : isHealed
-                              ? "text-amber-700 font-medium"
-                              : "text-gray-600"
-                      }
-                    >
-                      {log}
-                    </span>
+
+            {/* Tab Contents */}
+            <div className="p-6 bg-white min-h-[260px] font-mono text-sm leading-relaxed overflow-y-auto max-h-[340px]">
+              {activeTab === "terminal" && (
+                <div className="space-y-1">
+                  {consoleLogs.map((log, index) => {
+                    if (!log || typeof log !== "string") return null;
+                    const isCmd = log.startsWith("$");
+                    const isSuccess = log.includes("Passed") || log.includes("Success");
+                    const isHealed = log.includes("Healed");
+                    return (
+                      <div key={index} className="flex gap-2.5 items-start">
+                        <span className="text-emerald-600 select-none font-bold">›</span>
+                        <span
+                          className={
+                            isCmd
+                              ? "text-teal-950 font-bold"
+                              : isSuccess
+                                ? "text-emerald-700 font-semibold"
+                                : isHealed
+                                  ? "text-amber-700 font-semibold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200"
+                                  : "text-gray-700"
+                          }
+                        >
+                          {log}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  <span className="inline-block w-2.5 h-4 bg-emerald-500 animate-blink ml-1 align-middle" />
+                </div>
+              )}
+
+              {activeTab === "synthesizer" && (
+                <div className="space-y-2 text-xs text-gray-800">
+                  <div className="text-emerald-700 font-semibold">// AI Synthesis Pipeline generated scenarios from detected framework routes:</div>
+                  <pre className="p-4 bg-emerald-50/50 rounded-xl border border-emerald-200 text-emerald-900 font-mono leading-relaxed">
+{`{
+  "project": "automation_testing_agent",
+  "framework": "fastapi_nextjs",
+  "scenarios": [
+    { "id": 1, "description": "Verify /api/health returns HTTP 200 with online status" },
+    { "id": 2, "description": "Navigate to repository analyzer and submit GitHub URL" },
+    { "id": 3, "description": "Trigger evaluation benchmark and compare self-healing pass rates" }
+  ]
+}`}
+                  </pre>
+                </div>
+              )}
+
+              {activeTab === "healing" && (
+                <div className="space-y-3 text-xs">
+                  <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900">
+                    <span className="font-bold">SentenceTransformer Vector Healing:</span> Calculates cosine element similarity matrix in real-time when DOM locators change.
                   </div>
-                );
-              })}
-              <span className="inline-block w-2 h-4 bg-emerald-500 animate-blink ml-1 align-middle" />
+                  <div className="grid grid-cols-2 gap-3 font-mono">
+                    <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800">
+                      <div className="font-bold mb-1 text-[11px] uppercase tracking-wider">Broken Selector (Original)</div>
+                      <code>button#submit-v1</code>
+                    </div>
+                    <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-900">
+                      <div className="font-bold mb-1 text-[11px] uppercase tracking-wider">Healed Selector (94.6% Match)</div>
+                      <code>button[data-testid=&apos;submit-btn&apos;]</code>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Studio Footer Telemetry Bar */}
+            <div className="px-5 py-2.5 bg-gradient-to-r from-emerald-50/80 via-teal-50/60 to-emerald-50/80 border-t border-emerald-100 flex items-center justify-between text-xs text-emerald-900 font-mono flex-wrap gap-2">
+              <div className="flex items-center gap-4">
+                <span>⚡ Latency: <strong>18ms</strong></span>
+                <span>🎯 Healing Confidence: <strong className="text-emerald-700">94.6%</strong></span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span>🛡️ Engine: <strong>SentenceTransformer + Playwright</strong></span>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* ─── Process Flow (How it flows) ─── */}
-      <section className="max-w-6xl mx-auto px-4 text-center space-y-12">
-        <p className="font-mono text-xs uppercase tracking-widest text-emerald-700 font-bold">
-          How it flows
-        </p>
+      {/* ─── Process Flow (Interactive Timeline) ─── */}
+      <section className="max-w-6xl mx-auto px-4 text-center space-y-10">
+        <div className="space-y-2">
+          <span className="font-mono text-xs uppercase tracking-widest text-emerald-800 font-bold bg-emerald-100/80 px-3 py-1 rounded-full border border-emerald-300">
+            How It Works
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0a291e] tracking-tight">
+            From Git commit to fully healed browser tests
+          </h2>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-0 items-center justify-between text-left">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-stretch text-left">
           {[
             {
               step: "01",
-              title: "GitHub Repo",
-              desc: "Connect and clone projects",
+              title: "Connect Repo",
+              desc: "Paste your GitHub URL for automatic cloning into the sandbox.",
               icon: "⬡",
-              color: "text-emerald-700"
+              color: "text-emerald-700",
+              badge: "Clone & Parse"
             },
             {
               step: "02",
-              title: "AI Analysis",
-              desc: "Map routes and structures",
+              title: "Route Discovery",
+              desc: "Scans Next.js, FastAPI, Flask, React, and Django routes automatically.",
               icon: "✦",
-              color: "text-teal-700"
+              color: "text-teal-700",
+              badge: "AST Scanner"
             },
             {
               step: "03",
-              title: "Test Cases",
-              desc: "Auto-generate steps",
+              title: "AI Synthesis",
+              desc: "Generates natural language test cases and browser execution steps.",
               icon: "⚙",
-              color: "text-green-700"
+              color: "text-green-700",
+              badge: "LLM Synthesizer"
             },
             {
               step: "04",
-              title: "Playwright",
-              desc: "Fast browser execution",
+              title: "Playwright Run",
+              desc: "Executes in a real Chromium browser instance with assertion checks.",
               icon: "☁",
-              color: "text-emerald-800"
+              color: "text-emerald-800",
+              badge: "Headless/Headed"
             },
             {
               step: "05",
               title: "Self-Healing",
-              desc: "Fix selectors automatically",
+              desc: "Mutated selectors are auto-healed via semantic embeddings.",
               icon: "✓",
-              color: "text-emerald-600"
+              color: "text-emerald-600",
+              badge: "Vector Recovery"
             }
-          ].map((flow, i) => (
-            <div key={flow.step} className="flex items-center w-full relative">
-              <div className="flex flex-col items-center text-center space-y-3 w-full px-4">
-                <div className={`w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-2xl ${flow.color} shadow-sm`}>
-                  {flow.icon}
+          ].map((flow) => (
+            <div
+              key={flow.step}
+              className="glass-card p-5 border-emerald-200/80 hover:border-emerald-400 flex flex-col justify-between space-y-4 group"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-200">
+                    Step {flow.step}
+                  </span>
+                  <div className={`w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-lg ${flow.color} group-hover:scale-110 transition-transform shadow-2xs`}>
+                    {flow.icon}
+                  </div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-gray-900">{flow.title}</h4>
-                  <p className="text-xs text-gray-500 mt-1 max-w-[150px] mx-auto leading-relaxed">{flow.desc}</p>
+                  <h3 className="font-bold text-base text-gray-900 group-hover:text-emerald-800 transition-colors">
+                    {flow.title}
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-1.5 leading-relaxed">
+                    {flow.desc}
+                  </p>
                 </div>
               </div>
 
-              {/* Connecting line */}
-              {i < 4 && (
-                <div className="hidden md:block absolute right-[-20px] top-[28px] w-10 h-[1px] bg-gradient-to-r from-emerald-300 to-teal-300 z-0">
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                </div>
-              )}
+              <div className="pt-2 border-t border-emerald-100/80 flex items-center justify-between text-[11px] font-mono text-emerald-800">
+                <span>{flow.badge}</span>
+                <span>→</span>
+              </div>
             </div>
           ))}
         </div>
@@ -339,53 +515,82 @@ export default function HomePage() {
 
       {/* ─── Connection Panel (Active Tool Dashboard) ─── */}
       <section id="connect" ref={connectSectionRef} className="max-w-4xl mx-auto px-4 scroll-mt-24 space-y-6">
-        <div>
-          <h2 className="text-3xl font-bold font-serif text-[#0f2e22] flex items-center gap-2">
-            <span className="bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">
-              Connect Repository
-            </span>
+        
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-3 py-1 rounded-full border border-emerald-300">
+            <span>🚀 Live Workbench</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0a291e] tracking-tight">
+            Connect & Analyze Repository
           </h2>
-          <p className="text-gray-600 text-sm mt-1">
-            Submit a GitHub repository URL to analyze its framework, extract page routes, and generate tests.
+          <p className="text-gray-600 text-sm">
+            Enter a public GitHub repository. Our agent will inspect files, map frontend/backend routes, and generate an actionable test suite.
           </p>
         </div>
 
-        {/* Input Form */}
-        <form onSubmit={handleSubmit} className="glass-card p-6 border-emerald-200/80">
-          <label className="block text-sm font-semibold text-emerald-900 mb-2">
-            GitHub Repository URL
-          </label>
+        {/* Input Form Card */}
+        <form onSubmit={handleSubmit} className="glass-card p-6 border-emerald-300/80 shadow-lg space-y-4 bg-white/95">
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-bold text-emerald-950 flex items-center gap-2">
+              <span>GitHub Repository URL</span>
+            </label>
+            <button
+              type="button"
+              onClick={handlePasteClipboard}
+              className="text-xs text-emerald-700 hover:text-emerald-900 font-medium hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              <span>📋 Paste from clipboard</span>
+            </button>
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-3">
-            <input
-              id="repo-url-input"
-              ref={inputRef}
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://github.com/username/repo"
-              className="flex-1 px-4 py-3 bg-white border border-emerald-200/90 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-400/20 transition-all shadow-xs"
-              required
-            />
+            <div className="relative flex-1">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-mono text-sm">
+                gh:
+              </span>
+              <input
+                id="repo-url-input"
+                ref={inputRef}
+                type="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://github.com/username/repo"
+                className="w-full pl-12 pr-4 py-3.5 bg-white border border-emerald-300 rounded-xl text-gray-900 placeholder-gray-400 font-mono text-sm focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-400/25 transition-all shadow-xs"
+                required
+              />
+            </div>
+            
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-emerald-600/20 whitespace-nowrap"
+              className="px-7 py-3.5 btn-emerald-glow font-bold rounded-xl text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer flex items-center justify-center gap-2"
             >
-              {loading ? "Connecting..." : "Analyze Repo"}
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                  <span>Connecting & Cloning...</span>
+                </>
+              ) : (
+                <span>⚡ Analyze Repo</span>
+              )}
             </button>
           </div>
+
           {error && (
-            <p className="mt-3 text-sm text-rose-600 font-medium">{error}</p>
+            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2">
+              <span>⚠️</span>
+              <span>{error}</span>
+            </div>
           )}
         </form>
 
         {/* Status Stepper & Routes Result */}
         {repo && (
-          <div className="glass-card p-6 border-emerald-200/80 space-y-6">
-            <div className="flex items-center justify-between border-b border-emerald-100 pb-4">
+          <div className="glass-card p-6 border-emerald-300/80 space-y-6 shadow-xl bg-white/95">
+            <div className="flex items-center justify-between border-b border-emerald-100 pb-4 flex-wrap gap-2">
               <div className="flex items-center gap-3">
                 <StatusDot status={repo.status} />
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-bold text-gray-900 font-mono">
                   {repo.github_url.split("/").slice(-1)[0]}
                 </h3>
               </div>
@@ -398,17 +603,17 @@ export default function HomePage() {
             <div className="grid grid-cols-3 gap-4">
               {[
                 {
-                  label: "Clone Repository",
+                  label: "1. Clone Repo",
                   done: ["analyzing", "ready"].includes(repo.status),
                   active: repo.status === "cloning",
                 },
                 {
-                  label: "Detect Framework",
+                  label: "2. Detect Framework",
                   done: repo.status === "ready",
                   active: repo.status === "analyzing",
                 },
                 {
-                  label: "Scan Page Routes",
+                  label: "3. Scan Routes",
                   done: repo.status === "ready",
                   active: false,
                 },
@@ -417,16 +622,16 @@ export default function HomePage() {
                   key={step.label}
                   className={`p-4 rounded-xl border text-center transition-all ${
                     step.done
-                      ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                      ? "border-emerald-400 bg-emerald-50 text-emerald-900 shadow-2xs font-semibold"
                       : step.active
-                        ? "border-teal-400 bg-teal-50 text-teal-800"
+                        ? "border-teal-400 bg-teal-50 text-teal-900 font-semibold animate-pulse"
                         : "border-gray-200 bg-gray-50/50 text-gray-400"
                   }`}
                 >
                   <div className="text-xl mb-1 font-bold">
                     {step.done ? "✓" : step.active ? "◉" : "○"}
                   </div>
-                  <div className="text-xs font-semibold">{step.label}</div>
+                  <div className="text-xs">{step.label}</div>
                 </div>
               ))}
             </div>
@@ -435,16 +640,16 @@ export default function HomePage() {
             {repo.status === "ready" && (
               <>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80">
-                    <div className="text-xs text-gray-500 mb-1">Framework Detected</div>
-                    <div className="text-base font-semibold text-emerald-900 capitalize">
+                  <div className="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200 shadow-2xs">
+                    <div className="text-xs text-emerald-800 mb-1 font-semibold">Framework Detected</div>
+                    <div className="text-base font-bold text-emerald-950 capitalize font-mono">
                       {repo.framework_detected || "Unknown"}
                     </div>
                   </div>
-                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80">
-                    <div className="text-xs text-gray-500 mb-1">Routes Found</div>
-                    <div className="text-base font-semibold text-emerald-700">
-                      {repo.routes_json?.length || 0}
+                  <div className="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200 shadow-2xs">
+                    <div className="text-xs text-emerald-800 mb-1 font-semibold">Routes Found</div>
+                    <div className="text-base font-bold text-emerald-700 font-mono">
+                      {repo.routes_json?.length || 0} Endpoints
                     </div>
                   </div>
                 </div>
@@ -452,27 +657,28 @@ export default function HomePage() {
                 {/* Scanned Routes List */}
                 {repo.routes_json && repo.routes_json.length > 0 && (
                   <div className="space-y-2">
-                    <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Routes List
+                    <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wider flex items-center justify-between">
+                      <span>Scanned Route Manifest</span>
+                      <span className="text-emerald-700 font-mono font-medium">{repo.routes_json.length} paths</span>
                     </h4>
-                    <div className="rounded-xl border border-emerald-200/80 overflow-hidden bg-white shadow-xs">
+                    <div className="rounded-xl border border-emerald-200/90 overflow-hidden bg-white shadow-xs">
                       <table className="w-full text-xs text-left">
                         <thead>
-                          <tr className="bg-emerald-50/90 border-b border-emerald-100">
-                            <th className="px-4 py-2.5 text-emerald-900 font-semibold">Path</th>
-                            <th className="px-4 py-2.5 text-emerald-900 font-semibold">Method</th>
-                            <th className="px-4 py-2.5 text-emerald-900 font-semibold">Source Code File</th>
+                          <tr className="bg-emerald-50/90 border-b border-emerald-200">
+                            <th className="px-4 py-2.5 text-emerald-950 font-bold">Path</th>
+                            <th className="px-4 py-2.5 text-emerald-950 font-bold">Method</th>
+                            <th className="px-4 py-2.5 text-emerald-950 font-bold">Source File</th>
                           </tr>
                         </thead>
                         <tbody>
                           {repo.routes_json.map((route: Route, i: number) => (
                             <tr
                               key={i}
-                              className="border-b border-emerald-50 hover:bg-emerald-50/50 transition-colors"
+                              className="border-b border-emerald-50 hover:bg-emerald-50/60 transition-colors"
                             >
-                              <td className="px-4 py-2.5 font-mono text-emerald-800 font-semibold">{route.path}</td>
+                              <td className="px-4 py-2.5 font-mono text-emerald-900 font-bold">{route.path}</td>
                               <td className="px-4 py-2.5">
-                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 border border-emerald-200 text-emerald-800">
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 border border-emerald-300 text-emerald-900">
                                   {route.method}
                                 </span>
                               </td>
@@ -490,30 +696,38 @@ export default function HomePage() {
                   <button
                     onClick={handleGenerateTests}
                     disabled={generating}
-                    className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-md shadow-emerald-600/20"
+                    className="w-full py-4 btn-emerald-glow font-bold rounded-xl text-sm transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
                   >
-                    {generating ? "Generating Test Cases..." : "🤖 Generate Test Cases with AI"}
+                    {generating ? (
+                      <>
+                        <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                        <span>Synthesizing Test Scenarios with AI...</span>
+                      </>
+                    ) : (
+                      <span>🤖 Synthesize Test Scenarios with AI</span>
+                    )}
                   </button>
                 )}
 
                 {/* Generated cases view & execute button */}
                 {repo.generated_cases && repo.generated_cases.length > 0 && (
                   <div className="space-y-4 pt-2">
-                    <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Generated Scenarios ({repo.generated_cases.length})
+                    <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wider flex items-center justify-between">
+                      <span>Synthesized Scenarios ({repo.generated_cases.length})</span>
+                      <span className="text-emerald-700 font-mono text-xs">Ready for execution</span>
                     </h4>
-                    <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                    <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
                       {repo.generated_cases.map((tc) => (
                         <div
                           key={tc.id}
-                          className="p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-100 flex items-start gap-3"
+                          className="p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-200 flex items-start gap-3 hover:bg-emerald-50 transition-colors"
                         >
                           <span className="text-emerald-600 font-bold">▸</span>
                           <div className="space-y-0.5">
-                            <p className="text-sm text-gray-800 leading-snug">{tc.description}</p>
+                            <p className="text-sm text-gray-900 font-medium leading-snug">{tc.description}</p>
                             {tc.source_route && (
-                              <p className="text-[10px] text-emerald-700 font-mono">
-                                Target Route: {tc.source_route}
+                              <p className="text-[11px] text-emerald-800 font-mono font-medium">
+                                Target: {tc.source_route}
                               </p>
                             )}
                           </div>
@@ -524,9 +738,16 @@ export default function HomePage() {
                     <button
                       onClick={handleRunTests}
                       disabled={runStarted}
-                      className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-md shadow-emerald-600/20"
+                      className="w-full py-4 btn-emerald-glow font-bold rounded-xl text-sm transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
                     >
-                      {runStarted ? "🚀 Launching & Redirecting to Test Run..." : "🚀 Execute AI Test Suite"}
+                      {runStarted ? (
+                        <>
+                          <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                          <span>Launching & Redirecting to Test Run...</span>
+                        </>
+                      ) : (
+                        <span>🚀 Execute Test Suite with Self-Healing</span>
+                      )}
                     </button>
                   </div>
                 )}
@@ -536,57 +757,66 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* ─── Capabilities Section ─── */}
-      <section className="max-w-6xl mx-auto px-4 space-y-12">
-        <div className="text-center space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-semibold shadow-xs">
-            Capabilities
+      {/* ─── Capabilities Feature Matrix ─── */}
+      <section className="max-w-6xl mx-auto px-4 space-y-10">
+        <div className="text-center space-y-2">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-xs text-emerald-900 font-bold border border-emerald-300">
+            Engine Architecture
           </span>
-          <h3 className="font-serif text-4xl text-[#0f2e22]">Everything in one pipeline</h3>
-          <p className="text-sm text-gray-600 max-w-md mx-auto leading-relaxed">
-            From framework route scanning to dynamic self-healing runs — no configurations needed.
+          <h3 className="text-3xl sm:text-4xl font-extrabold text-[#0a291e] tracking-tight">
+            High-performance autonomous testing pipeline
+          </h3>
+          <p className="text-sm text-gray-600 max-w-lg mx-auto leading-relaxed">
+            Engineered to remove flakiness and automate end-to-end browser assertions with zero manual maintenance.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {[
             {
-              icon: "⬡",
-              title: "Framework Scanner",
-              desc: "Analyzes projects and maps routes in Next.js, React, Flask, Express, Django and more."
+              icon: "🔍",
+              title: "Framework Route Scanner",
+              desc: "Deep AST parsing maps endpoints across Next.js App Router, FastAPI, Flask, React, and Django with file references."
             },
             {
-              icon: "✦",
-              title: "AI Test Synth",
-              desc: "Synthesizes complete user login, navigation, and form interaction scenarios in plain English."
+              icon: "🤖",
+              title: "AI Scenario Synthesizer",
+              desc: "Translates code routes into realistic user flows: auth forms, navigation, state mutations, and API requests."
             },
             {
-              icon: "☁",
+              icon: "⚡",
               title: "Playwright Integration",
-              desc: "Runs tests on a persistent local Chromium browser instance, reducing initialization delays."
+              desc: "Fast headless Chromium test execution with console crash monitoring, network tracing, and visual diffs."
             },
             {
-              icon: "🎬",
-              title: "Visual Logs",
-              desc: "Captures step-by-step logs and screenshots for every test execution to ease error root-causing."
+              icon: "🛡️",
+              title: "Vector Self-Healing",
+              desc: "SentenceTransformer cosine embeddings repair broken UI locators on-the-fly without stopping execution."
             },
             {
-              icon: "🔁",
-              title: "Semantic Self-Healing",
-              desc: "Matches selectors semantically using SentenceTransformer embeddings, tolerating broken code."
+              icon: "📁",
+              title: "Exact File Target Pinpointing",
+              desc: "When a test fails, the diagnostic engine isolates the exact file and line to paste the suggested fix snippet."
             },
             {
               icon: "📊",
-              title: "Evaluation Suite",
-              desc: "Features a 20-scenario comparison run comparing normal runs against heals and failures."
+              title: "20-Case Benchmark Suite",
+              desc: "Validates healing accuracy on mutated IDs, rewritten classes, and renamed buttons to prove recovery rates."
             }
           ].map((cap) => (
-            <div key={cap.title} className="glass-card p-6 border-emerald-100/90 hover:border-emerald-300 space-y-3 shadow-xs">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-lg text-emerald-700">
+            <div
+              key={cap.title}
+              className="glass-card p-6 border-emerald-200/90 hover:border-emerald-400 space-y-3.5 group shadow-xs"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 border border-emerald-300 flex items-center justify-center text-xl shadow-xs group-hover:scale-110 transition-transform">
                 {cap.icon}
               </div>
-              <h4 className="font-semibold text-sm text-gray-900">{cap.title}</h4>
-              <p className="text-xs text-gray-600 leading-relaxed">{cap.desc}</p>
+              <h4 className="font-bold text-base text-gray-900 group-hover:text-emerald-900 transition-colors">
+                {cap.title}
+              </h4>
+              <p className="text-xs text-gray-600 leading-relaxed font-normal">
+                {cap.desc}
+              </p>
             </div>
           ))}
         </div>
