@@ -217,16 +217,16 @@ export default function HomePage() {
           </div>
 
           {/* Heading */}
-          <h1 className="font-serif text-6xl md:text-8xl tracking-tight leading-[0.95] text-[#0a291e] max-w-3xl mx-auto">
-            Connect repo.<br />
-            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 bg-clip-text text-transparent italic">
-              AI tests it.
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-[1.0] text-[#0a291e] max-w-4xl mx-auto">
+            Autonomous tests.<br />
+            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-500 bg-clip-text text-transparent italic">
+              Zero broken locators.
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-gray-600 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
-            Connect your GitHub repository, let our AI generate a complete test suite, and watch Playwright execute them locally — with self-healing.
+          <p className="text-emerald-950/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-normal">
+            Connect any GitHub repository. Our agent scans framework routes, generates complete browser test suites, and heals mutated selectors using local embedding models.
           </p>
 
           {/* Action Buttons */}
