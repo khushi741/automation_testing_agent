@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   createRepo,
   getRepo,
@@ -27,6 +28,7 @@ function StatusDot({ status }: { status: string }) {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const [url, setUrl] = useState("");
   const [repo, setRepo] = useState<Repo | null>(null);
   const [loading, setLoading] = useState(false);
@@ -142,10 +144,13 @@ export default function HomePage() {
     if (!repo) return;
     setRunStarted(true);
     try {
-      await createTestRun({
+      const run = await createTestRun({
         repo_id: repo.id,
         self_healing_enabled: true,
       });
+      if (run && run.id) {
+        router.push(`/runs/${run.id}`);
+      }
     } catch (err: unknown) {
       const error = err as Error;
       setError(error.message);
@@ -500,7 +505,7 @@ export default function HomePage() {
                       disabled={runStarted}
                       className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/15"
                     >
-                      {runStarted ? "✓ Test Run Started — View in Test Runs" : "🚀 Execute AI Test Suite"}
+                      {runStarted ? "🚀 Launching & Redirecting to Test Run..." : "🚀 Execute AI Test Suite"}
                     </button>
                   </div>
                 )}

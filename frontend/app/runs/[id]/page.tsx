@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getTestRun, TestRun, ExecutionStep, screenshotUrl } from "@/lib/api";
 
@@ -113,8 +114,31 @@ export default function RunDetailPage() {
         ))}
       </div>
 
+      {/* Evaluation Banner */}
+      {run.target === "evaluation" && (
+        <div className="glass-card p-8 border-purple-500/20 text-center space-y-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-center text-3xl">
+            📊
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-xl font-bold text-white">Self-Healing Evaluation Suite</h3>
+            <p className="text-sm text-gray-400 max-w-lg mx-auto">
+              This run executes the 20-scenario synthetic benchmark evaluating dynamic button mutations, class rewrites, and semantic selector recovery.
+            </p>
+          </div>
+          <div className="pt-2">
+            <Link
+              href="/evaluation"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium rounded-xl text-sm transition-all shadow-lg shadow-purple-500/20"
+            >
+              Open Evaluation Dashboard & Metrics →
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Test Cases */}
-      {run.test_cases && run.test_cases.length > 0 && (
+      {run.test_cases && run.test_cases.length > 0 ? (
         <div className="space-y-3">
           <h2 className="text-lg font-semibold text-gray-300">
             Test Cases ({run.test_cases.length})
@@ -263,7 +287,21 @@ export default function RunDetailPage() {
             </div>
           ))}
         </div>
-      )}
+      ) : run.status === "running" || run.status === "queued" ? (
+        <div className="glass-card p-12 text-center space-y-4">
+          <div className="w-10 h-10 mx-auto rounded-full border-2 border-blue-400 border-t-transparent animate-spin" />
+          <div className="space-y-1">
+            <h3 className="text-base font-semibold text-white">Executing Test Suite...</h3>
+            <p className="text-sm text-gray-400 max-w-md mx-auto">
+              Playwright browser is navigating target routes, validating assertions, and applying self-healing if selectors broke.
+            </p>
+          </div>
+        </div>
+      ) : run.target !== "evaluation" ? (
+        <div className="glass-card p-12 text-center text-gray-500">
+          No test cases found for this run.
+        </div>
+      ) : null}
     </div>
   );
 }

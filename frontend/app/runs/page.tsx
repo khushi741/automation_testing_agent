@@ -127,7 +127,17 @@ export default function RunsPage() {
                     </Link>
                   </td>
                   <td className="px-5 py-3.5 text-gray-300">
-                    {run.target || "—"}
+                    {run.target === "evaluation" ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                        Evaluation Suite
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-xs text-gray-300">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        {run.target || "Repository Suite"}
+                      </span>
+                    )}
                   </td>
                   <td className="px-5 py-3.5">
                     {run.self_healing_enabled ? (

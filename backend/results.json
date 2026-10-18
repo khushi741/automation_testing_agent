@@ -2,221 +2,176 @@
   "total_cases": 20,
   "without_healing": {
     "pass_rate": 0.0,
-    "normal_pass_rate": 1.0,
-    "broken_pass_rate": 0.0,
     "total_passed": 0,
     "total_failed": 20,
     "details": [
       {
         "case": "Navigate to http://localhost:5000/demo/login, type 'admin' in the username field, type 'admin123' in the password field, click the 'Sign In' button, and verify the page contains 'Welcome back, Admin!'",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, fill username with 'admin', fill password with 'admin123', click Sign In, and check if welcome greeting is visible",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Go to the login screen http://localhost:5000/demo/login, type 'admin' in the username input, type 'admin123' in the password input, press Sign In, and verify 'Welcome back' is present",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, type 'admin' for the username input field, type 'admin123' for the password input field, click 'Sign In', and confirm dashboard loaded",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Navigate to http://localhost:5000/demo/login, fill 'admin' into username, fill 'admin123' into password, submit the form with Sign In button, and verify authentication succeeded",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, enter 'admin' in the account input, enter 'admin123' in the password credentials, click the login action, and verify the welcome heading",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Navigate to http://localhost:5000/demo/login, write 'admin' in username textbox, write 'admin123' in password textbox, click Sign In, and check welcome message",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, type 'admin' in user, type 'admin123' in pass, click sign in, and verify the header says Welcome",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, log in with username 'admin' and password 'admin123', check that welcome header is shown on dashboard",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, type 'admin' into the username text field, enter 'admin123' in password field, click Sign In button, and verify logout link is visible",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Navigate to http://localhost:5000/demo/login, enter username 'admin' and password 'admin123', click login button, check dashboard page welcome text, and then click Logout",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, fill username input with 'admin', fill password input with 'admin123', submit, and then click the logout link",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, enter account name 'admin', enter security code 'admin123', click Sign In, and click the logout button to exit",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, log in with admin/admin123 credentials, check welcome message on dashboard, and perform logout",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Navigate to http://localhost:5000/demo/login, type 'admin' in username input field, type 'admin123' in password input field, submit form, verify URL contains dashboard",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, fill username field with 'admin', fill password field with 'admin123', click login, and assert the URL contains dashboard",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, type 'admin' in username field, type 'admin123' in password, click Sign In, check if welcome banner is loaded, and exit by clicking Logout",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, login using username 'admin' and password 'admin123', verify welcome message is displayed, and exit application",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, write username 'admin', write password 'admin123', submit, verify welcome back, and click the logout link",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       },
       {
         "case": "Navigate to http://localhost:5000/demo/login, sign in with 'admin' and 'admin123', confirm you see welcome header on the dashboard",
-        "status": "FAILED",
-        "error": null
+        "status": "FAILED"
       }
     ]
   },
   "with_healing": {
-    "pass_rate": 0.25,
-    "normal_pass_rate": 1.0,
-    "broken_pass_rate": 0.25,
-    "total_passed": 5,
-    "total_failed": 15,
-    "avg_healing_confidence": 0.48293845203458047,
-    "false_heal_rate": 0.0,
+    "pass_rate": 1.0,
+    "total_passed": 20,
+    "total_failed": 0,
+    "avg_healing_confidence": 0.40166533815449684,
     "details": [
       {
         "case": "Navigate to http://localhost:5000/demo/login, type 'admin' in the username field, type 'admin123' in the password field, click the 'Sign In' button, and verify the page contains 'Welcome back, Admin!'",
-        "status": "FAILED",
-        "healing_events": 3
+        "status": "PASSED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, fill username with 'admin', fill password with 'admin123', click Sign In, and check if welcome greeting is visible",
-        "status": "FAILED",
-        "healing_events": 3
+        "status": "PASSED"
       },
       {
         "case": "Go to the login screen http://localhost:5000/demo/login, type 'admin' in the username input, type 'admin123' in the password input, press Sign In, and verify 'Welcome back' is present",
-        "status": "FAILED",
-        "healing_events": 3
+        "status": "PASSED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, type 'admin' for the username input field, type 'admin123' for the password input field, click 'Sign In', and confirm dashboard loaded",
-        "status": "FAILED",
-        "healing_events": 3
+        "status": "PASSED"
       },
       {
         "case": "Navigate to http://localhost:5000/demo/login, fill 'admin' into username, fill 'admin123' into password, submit the form with Sign In button, and verify authentication succeeded",
-        "status": "FAILED",
-        "healing_events": 3
+        "status": "PASSED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, enter 'admin' in the account input, enter 'admin123' in the password credentials, click the login action, and verify the welcome heading",
-        "status": "FAILED",
-        "healing_events": 2
+        "status": "PASSED"
       },
       {
         "case": "Navigate to http://localhost:5000/demo/login, write 'admin' in username textbox, write 'admin123' in password textbox, click Sign In, and check welcome message",
-        "status": "FAILED",
-        "healing_events": 3
+        "status": "PASSED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, type 'admin' in user, type 'admin123' in pass, click sign in, and verify the header says Welcome",
-        "status": "FAILED",
-        "healing_events": 3
+        "status": "PASSED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, log in with username 'admin' and password 'admin123', check that welcome header is shown on dashboard",
-        "status": "FAILED",
-        "healing_events": 0
+        "status": "PASSED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, type 'admin' into the username text field, enter 'admin123' in password field, click Sign In button, and verify logout link is visible",
-        "status": "PASSED",
-        "healing_events": 4
+        "status": "PASSED"
       },
       {
         "case": "Navigate to http://localhost:5000/demo/login, enter username 'admin' and password 'admin123', click login button, check dashboard page welcome text, and then click Logout",
-        "status": "FAILED",
-        "healing_events": 2
+        "status": "PASSED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, fill username input with 'admin', fill password input with 'admin123', submit, and then click the logout link",
-        "status": "PASSED",
-        "healing_events": 4
+        "status": "PASSED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, enter account name 'admin', enter security code 'admin123', click Sign In, and click the logout button to exit",
-        "status": "PASSED",
-        "healing_events": 2
+        "status": "PASSED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, log in with admin/admin123 credentials, check welcome message on dashboard, and perform logout",
-        "status": "FAILED",
-        "healing_events": 0
+        "status": "PASSED"
       },
       {
         "case": "Navigate to http://localhost:5000/demo/login, type 'admin' in username input field, type 'admin123' in password input field, submit form, verify URL contains dashboard",
-        "status": "PASSED",
-        "healing_events": 3
+        "status": "PASSED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, fill username field with 'admin', fill password field with 'admin123', click login, and assert the URL contains dashboard",
-        "status": "FAILED",
-        "healing_events": 3
+        "status": "PASSED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, type 'admin' in username field, type 'admin123' in password, click Sign In, check if welcome banner is loaded, and exit by clicking Logout",
-        "status": "FAILED",
-        "healing_events": 3
+        "status": "PASSED"
       },
       {
         "case": "Open http://localhost:5000/demo/login, login using username 'admin' and password 'admin123', verify welcome message is displayed, and exit application",
-        "status": "FAILED",
-        "healing_events": 0
+        "status": "PASSED"
       },
       {
         "case": "Go to http://localhost:5000/demo/login, write username 'admin', write password 'admin123', submit, verify welcome back, and click the logout link",
-        "status": "PASSED",
-        "healing_events": 5
+        "status": "PASSED"
       },
       {
         "case": "Navigate to http://localhost:5000/demo/login, sign in with 'admin' and 'admin123', confirm you see welcome header on the dashboard",
-        "status": "FAILED",
-        "healing_events": 0
+        "status": "PASSED"
       }
     ]
   }

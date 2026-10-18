@@ -14,6 +14,19 @@ from src.config import SCRATCH_DIR
 logger = logging.getLogger(__name__)
 
 
+import os
+import stat
+
+
+def _remove_readonly(func, path, exc_info):
+    """Clear readonly bit and retry file deletion (common on Windows with .git objects)."""
+    try:
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+    except Exception:
+        pass
+
+
 def cleanup_repo(repo_id: str, local_path: Optional[str] = None):
     """
     Deletes the cloned repo directory after a test run completes.
@@ -25,7 +38,7 @@ def cleanup_repo(repo_id: str, local_path: Optional[str] = None):
     if target.exists():
         logger.info(f"Cleaning up cloned repo at {target}...")
         try:
-            shutil.rmtree(target)
+            shutil.rmtree(target, onerror=_remove_readonly)
             logger.info(f"Successfully removed {target}")
         except Exception as e:
             logger.error(f"Failed to remove {target}: {e}")
@@ -33,7 +46,7 @@ def cleanup_repo(repo_id: str, local_path: Optional[str] = None):
             nm = target / "node_modules"
             if nm.exists():
                 try:
-                    shutil.rmtree(nm)
+                    shutil.rmtree(nm, onerror=_remove_readonly)
                     logger.info(f"Removed node_modules from {target}")
                 except Exception as nm_err:
                     logger.error(f"Failed to remove node_modules: {nm_err}")
@@ -64,7 +77,7 @@ def startup_cleanup(db: Session):
     for item in SCRATCH_DIR.iterdir():
         if item.is_dir() and item.name not in active_ids:
             try:
-                shutil.rmtree(item)
+                shutil.rmtree(item, onerror=_remove_readonly)
                 logger.info(f"Removed orphaned scratch directory: {item.name}")
                 removed_count += 1
             except Exception as e:
