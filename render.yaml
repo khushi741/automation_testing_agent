@@ -3,7 +3,7 @@
 services:
   # 1. FastAPI + Playwright Backend Service
   - type: web
-    name: automation-testing-backend
+    name: automation-testing-agent-backend
     env: docker
     dockerfilePath: backend/Dockerfile
     dockerContext: backend
@@ -20,7 +20,7 @@ services:
 
   # 2. Next.js 16 Frontend Web Service
   - type: web
-    name: automation-testing-frontend
+    name: automation-testing-agent-frontend
     env: node
     plan: free
     region: oregon
@@ -30,5 +30,5 @@ services:
       - key: NEXT_PUBLIC_API_URL
         fromService:
           type: web
-          name: automation-testing-backend
+          name: automation-testing-agent-backend
           property: host
