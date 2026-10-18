@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #070514;
-  --bg-card: rgba(18, 14, 38, 0.65);
-  --bg-card-hover: rgba(26, 20, 56, 0.85);
-  --border: rgba(168, 85, 247, 0.12);
-  --border-hover: rgba(168, 85, 247, 0.25);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  --bg-primary: #f7faf7;
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-card-hover: #ffffff;
+  --border: rgba(16, 185, 129, 0.18);
+  --border-hover: rgba(16, 185, 129, 0.38);
+  --text-primary: #0f2e22;
+  --text-secondary: #486356;
   
-  --accent-blue: #6366f1;       /* Indigo */
-  --accent-purple: #a855f7;     /* Violet */
-  --accent-green: #10b981;      /* Emerald */
-  --accent-red: #f43f5e;        /* Rose */
-  --accent-yellow: #f59e0b;     /* Amber */
+  --accent-green: #10b981;       /* Emerald */
+  --accent-mint: #34d399;        /* Mint */
+  --accent-teal: #14b8a6;        /* Teal */
+  --accent-red: #e11d48;         /* Rose */
+  --accent-yellow: #d97706;      /* Amber */
 }
 
 body {
@@ -21,14 +21,15 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
-  /* Premium dual radial glow */
+  /* Luminous dual light green radial glows */
   background-image: 
-    radial-gradient(circle at 15% 15%, rgba(168, 85, 247, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 12% 12%, rgba(16, 185, 129, 0.09) 0%, transparent 45%),
+    radial-gradient(circle at 88% 85%, rgba(52, 211, 153, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(20, 184, 166, 0.04) 0%, transparent 60%);
   background-attachment: fixed;
 }
 
-/* Animations from reference */
+/* Animations */
 @keyframes shimmer { 
   0% { left: -100%; } 
   100% { left: 200%; } 
@@ -52,7 +53,7 @@ body {
   left: -100%;
   width: 55%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   animation: shimmer 2.8s infinite;
 }
 .animate-blink {
@@ -76,35 +77,35 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(168, 85, 247, 0.2);
+  background: rgba(16, 185, 129, 0.25);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(168, 85, 247, 0.4);
+  background: rgba(16, 185, 129, 0.45);
 }
 
-/* Frosty glassmorphism card */
+/* Crisp White & Light Green Glass Card */
 .glass-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 18px;
   backdrop-filter: blur(16px);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px -2px rgba(16, 185, 129, 0.07), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .glass-card:hover {
   background: var(--bg-card-hover);
   border-color: var(--border-hover);
   box-shadow: 
-    0 15px 35px -10px rgba(0, 0, 0, 0.8),
-    0 0 20px 0 rgba(168, 85, 247, 0.05);
+    0 12px 30px -4px rgba(16, 185, 129, 0.14),
+    0 0 15px 0 rgba(16, 185, 129, 0.07);
   transform: translateY(-2px);
 }
 
 /* Accent inputs and buttons focus */
 input:focus {
-  border-color: rgba(168, 85, 247, 0.4) !important;
-  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15) !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18) !important;
 }
 
 /* Status badges */
@@ -112,54 +113,54 @@ input:focus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 14px;
+  padding: 5px 13px;
   border-radius: 9999px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.05em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 .badge-passed {
-  color: #34d399;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.15);
+  color: #065f46;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
 }
 .badge-failed {
-  color: #fb7185;
-  background: rgba(244, 63, 94, 0.08);
-  border: 1px solid rgba(244, 63, 94, 0.15);
+  color: #9f1239;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
 }
 .badge-healed {
-  color: #fbbf24;
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.15);
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
 }
 .badge-running {
-  color: #60a5fa;
-  background: rgba(59, 130, 246, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.15);
+  color: #0f766e;
+  background: #f0fdfa;
+  border: 1px solid #99f6e4;
 }
 .badge-queued {
-  color: #cbd5e1;
-  background: rgba(148, 163, 184, 0.08);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  color: #475569;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
 }
 .badge-completed {
-  color: #34d399;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.15);
+  color: #065f46;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
 }
 
-/* Glowing text & box classes */
+/* Soft glowing text & box classes */
 .glow-purple {
-  box-shadow: 0 0 25px rgba(168, 85, 247, 0.18);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
 }
 .glow-green {
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
 }
 .glow-red {
-  box-shadow: 0 0 25px rgba(244, 63, 94, 0.15);
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.12);
 }
 
 /* Micro-animations */

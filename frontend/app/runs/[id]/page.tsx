@@ -89,28 +89,28 @@ export default function RunDetailPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold mb-1">
-            <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold font-serif mb-1 text-[#0f2e22]">
+            <span className="bg-gradient-to-r from-emerald-700 via-teal-700 to-green-600 bg-clip-text text-transparent">
               Run {run.id.slice(0, 8)}
             </span>
           </h1>
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-600 text-sm">
             Target:{" "}
             {run.target && run.target.includes("/") ? (
               <a
                 href={`https://github.com/${run.target}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-purple-400 hover:text-purple-300 hover:underline font-mono"
+                className="text-emerald-700 hover:text-emerald-900 hover:underline font-mono font-semibold"
               >
                 {run.target} ↗
               </a>
             ) : (
-              <span className="text-slate-200 font-medium">{run.target || "demo"}</span>
+              <span className="text-gray-800 font-semibold">{run.target || "demo"}</span>
             )}{" "}
-            • Self-Healing: {run.self_healing_enabled ? "On" : "Off"}
+            • Self-Healing: <span className="font-medium text-emerald-800">{run.self_healing_enabled ? "On" : "Off"}</span>
           </p>
         </div>
         <span
@@ -121,61 +121,61 @@ export default function RunDetailPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           {
             label: "Pass Rate",
             value: `${passRate}%`,
-            color: "text-emerald-400",
+            color: "text-emerald-700",
             glow: "glow-green",
           },
           {
             label: "Passed",
             value: run.pass_count,
-            color: "text-emerald-400",
+            color: "text-emerald-700",
             glow: "",
           },
           {
             label: "Failed",
             value: run.fail_count,
-            color: "text-red-400",
+            color: "text-rose-600",
             glow: run.fail_count > 0 ? "glow-red" : "",
           },
           {
             label: "Healed",
             value: run.heal_count,
-            color: "text-yellow-400",
+            color: "text-amber-600",
             glow: "",
           },
         ].map((stat) => (
           <div
             key={stat.label}
-            className={`glass-card p-5 text-center ${stat.glow}`}
+            className={`glass-card p-5 text-center bg-white border-emerald-100 ${stat.glow}`}
           >
             <div className={`text-3xl font-bold ${stat.color}`}>
               {stat.value}
             </div>
-            <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
+            <div className="text-sm text-gray-500 mt-1 font-medium">{stat.label}</div>
           </div>
         ))}
       </div>
 
       {/* Evaluation Banner */}
       {run.target === "evaluation" && (
-        <div className="glass-card p-8 border-purple-500/20 text-center space-y-4">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-center text-3xl">
+        <div className="glass-card p-8 border-emerald-200 bg-emerald-50/60 text-center space-y-4 shadow-sm">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-white border border-emerald-200 flex items-center justify-center text-3xl shadow-xs">
             📊
           </div>
           <div className="space-y-1">
-            <h3 className="text-xl font-bold text-white">Self-Healing Evaluation Suite</h3>
-            <p className="text-sm text-gray-400 max-w-lg mx-auto">
+            <h3 className="text-xl font-bold text-gray-900">Self-Healing Evaluation Suite</h3>
+            <p className="text-sm text-gray-600 max-w-lg mx-auto leading-relaxed">
               This run executes the 20-scenario synthetic benchmark evaluating dynamic button mutations, class rewrites, and semantic selector recovery.
             </p>
           </div>
           <div className="pt-2">
             <Link
               href="/evaluation"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium rounded-xl text-sm transition-all shadow-lg shadow-purple-500/20"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium rounded-xl text-sm transition-all shadow-md shadow-emerald-600/20"
             >
               Open Evaluation Dashboard & Metrics →
             </Link>
@@ -186,7 +186,7 @@ export default function RunDetailPage() {
       {/* Test Cases */}
       {run.test_cases && run.test_cases.length > 0 ? (
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-300">
+          <h2 className="text-lg font-semibold text-gray-800">
             Test Cases ({run.test_cases.length})
           </h2>
 
@@ -198,12 +198,12 @@ export default function RunDetailPage() {
             return (
               <div
                 key={tc.id}
-                className={`glass-card transition-all duration-200 border ${
+                className={`glass-card transition-all duration-200 border bg-white ${
                   tc.status === "failed"
-                    ? "border-red-500/20 hover:border-red-500/40"
+                    ? "border-rose-200 hover:border-rose-300"
                     : tc.status === "healed"
-                      ? "border-yellow-500/20 hover:border-yellow-500/40"
-                      : "border-emerald-500/15 hover:border-emerald-500/30"
+                      ? "border-amber-200 hover:border-amber-300"
+                      : "border-emerald-100 hover:border-emerald-300"
                 }`}
               >
                 {/* Clickable Header */}
@@ -213,16 +213,16 @@ export default function RunDetailPage() {
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3 flex-1">
-                      <span className="text-gray-500 font-mono text-sm mt-0.5">
+                      <span className="text-gray-400 font-mono text-sm mt-0.5 font-bold">
                         #{idx + 1}
                       </span>
                       <div className="space-y-1">
-                        <p className="text-gray-100 font-medium text-sm leading-snug">
+                        <p className="text-gray-900 font-medium text-sm leading-snug">
                           {tc.description}
                         </p>
                         <div className="flex items-center gap-2 flex-wrap">
                           {tc.source_route && (
-                            <span className="text-[11px] text-gray-400 font-mono px-2 py-0.5 rounded bg-white/[0.04] border border-white/5">
+                            <span className="text-[11px] text-emerald-800 font-mono px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200">
                               Route: {tc.source_route}
                             </span>
                           )}
@@ -243,8 +243,8 @@ export default function RunDetailPage() {
                         type="button"
                         className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${
                           isExpanded
-                            ? "bg-purple-500/20 text-purple-300 border-purple-500/30"
-                            : "bg-white/[0.04] text-gray-400 border-white/10 hover:text-white hover:bg-white/[0.08]"
+                            ? "bg-emerald-100 text-emerald-800 border-emerald-300 font-semibold"
+                            : "bg-gray-50 text-gray-600 border-gray-200 hover:text-emerald-800 hover:bg-emerald-50"
                         }`}
                       >
                         {isExpanded ? "▲ Hide Guide" : "💡 Root Cause & Fix Guide ▼"}
@@ -255,17 +255,17 @@ export default function RunDetailPage() {
 
                 {/* Expanded Details Panel */}
                 {isExpanded && (
-                  <div className="px-5 pb-5 pt-0 space-y-5 border-t border-white/5 mt-1">
+                  <div className="px-5 pb-5 pt-0 space-y-5 border-t border-gray-100 mt-1">
                     {/* ─── AI Root Cause & Fix Guide ─── */}
-                    <div className="rounded-xl border border-purple-500/20 bg-purple-950/20 p-5 space-y-4 mt-4">
+                    <div className="rounded-xl border border-emerald-200/90 bg-emerald-50/40 p-5 space-y-4 mt-4">
                       <div className="flex items-center justify-between flex-wrap gap-2">
                         <div className="flex items-center gap-2">
                           <span className="text-xl">🤖</span>
                           <div>
-                            <h4 className="font-semibold text-sm text-purple-200">
+                            <h4 className="font-semibold text-sm text-emerald-950">
                               AI Diagnostic & Root Cause Report
                             </h4>
-                            <p className="text-[11px] text-purple-300/70">
+                            <p className="text-[11px] text-emerald-800/80">
                               Automated error analysis and actionable fix recommendations
                             </p>
                           </div>
@@ -273,15 +273,15 @@ export default function RunDetailPage() {
 
                         {diag && (
                           <div className="flex items-center gap-2">
-                            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
                               {diag.category}
                             </span>
                             {diag.severity && diag.severity !== "None" && (
                               <span
                                 className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
                                   diag.severity.includes("High")
-                                    ? "bg-red-500/20 text-red-300 border border-red-500/30"
-                                    : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                                    ? "bg-rose-100 text-rose-800 border border-rose-200"
+                                    : "bg-amber-100 text-amber-800 border border-amber-200"
                                 }`}
                               >
                                 {diag.severity} Priority
@@ -292,19 +292,19 @@ export default function RunDetailPage() {
                       </div>
 
                       {isLoadingDiag ? (
-                        <div className="flex items-center gap-3 py-6 text-purple-300/80 text-sm animate-pulse justify-center">
-                          <span className="w-4 h-4 rounded-full border-2 border-purple-400 border-t-transparent animate-spin" />
+                        <div className="flex items-center gap-3 py-6 text-emerald-800 text-sm animate-pulse justify-center">
+                          <span className="w-4 h-4 rounded-full border-2 border-emerald-600 border-t-transparent animate-spin" />
                           Analyzing execution logs, network trace, and failure semantics...
                         </div>
                       ) : diag ? (
                         <div className="space-y-4 text-sm">
                           {/* Title */}
                           <div className="flex items-center justify-between flex-wrap gap-2">
-                            <div className="text-sm font-semibold text-purple-100 flex items-center gap-2">
+                            <div className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                               <span>📌</span> {diag.title}
                             </div>
                             {diag.target_file && (
-                              <div className="flex items-center gap-1.5 text-xs font-mono text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-lg">
+                              <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-900 bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg">
                                 <span>📁</span>
                                 <span>{diag.target_file}</span>
                               </div>
@@ -313,10 +313,10 @@ export default function RunDetailPage() {
 
                           {/* Root Cause (What went wrong) */}
                           <div className="space-y-1.5">
-                            <div className="flex items-center gap-1.5 text-xs font-semibold text-red-400 uppercase tracking-wider">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold text-rose-700 uppercase tracking-wider">
                               <span>🔍</span> What Went Wrong (Root Cause)
                             </div>
-                            <div className="text-gray-300 leading-relaxed bg-black/40 p-3.5 rounded-xl border border-white/5 font-sans">
+                            <div className="text-gray-800 leading-relaxed bg-white p-3.5 rounded-xl border border-rose-100 font-sans shadow-2xs">
                               {diag.root_cause}
                             </div>
                           </div>
@@ -324,16 +324,16 @@ export default function RunDetailPage() {
                           {/* How Can It Be Fixed */}
                           <div className="space-y-1.5">
                             <div className="flex items-center justify-between flex-wrap gap-2">
-                              <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+                              <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-800 uppercase tracking-wider">
                                 <span>🛠️</span> How Can It Be Fixed (Actionable Solution)
                               </div>
                               {diag.target_file && !diag.suggested_code && (
-                                <span className="text-xs font-mono text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded flex items-center gap-1">
+                                <span className="text-xs font-mono text-emerald-900 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded flex items-center gap-1">
                                   📁 {diag.target_file}
                                 </span>
                               )}
                             </div>
-                            <div className="text-gray-300 whitespace-pre-line leading-relaxed bg-black/40 p-3.5 rounded-xl border border-white/5 font-sans">
+                            <div className="text-gray-800 whitespace-pre-line leading-relaxed bg-white p-3.5 rounded-xl border border-emerald-100 font-sans shadow-2xs">
                               {diag.fix_recommendation}
                             </div>
                           </div>
@@ -342,7 +342,7 @@ export default function RunDetailPage() {
                           {diag.suggested_code && (
                             <div className="space-y-2">
                               <div className="flex items-center justify-between flex-wrap gap-2">
-                                <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-400 uppercase tracking-wider">
+                                <div className="flex items-center gap-1.5 text-xs font-semibold text-teal-800 uppercase tracking-wider">
                                   <span>💻</span> Recommended Code / Fix Snippet
                                 </div>
                                 <button
@@ -351,7 +351,7 @@ export default function RunDetailPage() {
                                     e.stopPropagation();
                                     copySnippet(diag.suggested_code, tc.id);
                                   }}
-                                  className="text-xs px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 transition-all flex items-center gap-1"
+                                  className="text-xs px-2.5 py-1 rounded-lg bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-200 transition-all flex items-center gap-1 font-medium shadow-xs"
                                 >
                                   {copiedId === tc.id ? "✓ Copied!" : "📋 Copy Snippet"}
                                 </button>
@@ -359,20 +359,20 @@ export default function RunDetailPage() {
 
                               {/* Target File to Paste / Apply in */}
                               {diag.target_file && (
-                                <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-purple-500/10 border border-purple-500/25 text-xs">
-                                  <span className="text-purple-300 font-semibold flex items-center gap-1.5 whitespace-nowrap">
+                                <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-100/80 border border-emerald-300 text-xs shadow-2xs">
+                                  <span className="text-emerald-950 font-bold flex items-center gap-1.5 whitespace-nowrap">
                                     <span>📁</span> Target File:
                                   </span>
-                                  <span className="text-gray-400 text-xs hidden sm:inline whitespace-nowrap">
+                                  <span className="text-emerald-800 text-xs hidden sm:inline whitespace-nowrap">
                                     Paste or modify code in:
                                   </span>
-                                  <code className="font-mono text-purple-200 bg-purple-950/70 px-2.5 py-1 rounded-lg border border-purple-500/30 font-semibold select-all break-all">
+                                  <code className="font-mono text-emerald-900 bg-white px-2.5 py-1 rounded-lg border border-emerald-300 font-bold select-all break-all">
                                     {diag.target_file}
                                   </code>
                                 </div>
                               )}
 
-                              <pre className="p-3.5 rounded-xl bg-black/60 border border-white/10 text-xs font-mono text-purple-200 overflow-x-auto leading-relaxed">
+                              <pre className="p-4 rounded-xl bg-[#0c1813] border border-emerald-500/20 text-xs font-mono text-emerald-300 overflow-x-auto leading-relaxed shadow-inner">
                                 {diag.suggested_code}
                               </pre>
                             </div>
@@ -380,17 +380,17 @@ export default function RunDetailPage() {
 
                           {/* Prevention Tip */}
                           {diag.prevention_tip && (
-                            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-200">
+                            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-teal-50 border border-teal-200 text-xs text-teal-900">
                               <span className="text-base mt-0.5">🛡️</span>
                               <div>
-                                <strong className="font-semibold text-blue-300">Engineering Prevention Tip:</strong>{" "}
+                                <strong className="font-semibold text-teal-950">Engineering Prevention Tip:</strong>{" "}
                                 {diag.prevention_tip}
                               </div>
                             </div>
                           )}
                         </div>
                       ) : (
-                        <div className="text-gray-400 text-xs py-2">
+                        <div className="text-gray-500 text-xs py-2">
                           Diagnostic analysis unavailable.
                         </div>
                       )}
@@ -399,25 +399,25 @@ export default function RunDetailPage() {
                     {/* ─── Execution Steps ─── */}
                     {tc.steps_json && tc.steps_json.length > 0 && (
                       <div className="space-y-2">
-                        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <h4 className="text-xs font-medium text-gray-600 uppercase tracking-wider">
                           Execution Steps ({tc.steps_json.length})
                         </h4>
                         <div className="space-y-1.5">
                           {tc.steps_json.map((step: ExecutionStep, si: number) => (
                             <div key={si} className="space-y-1">
-                              <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04] text-sm">
+                              <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-white border border-emerald-100 text-sm shadow-2xs">
                                 <span
                                   className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
                                     step.status === "PASSED" || step.status === "HEALED"
-                                      ? "bg-emerald-500/20 text-emerald-400"
+                                      ? "bg-emerald-100 text-emerald-800"
                                       : step.status === "FAILED"
-                                        ? "bg-red-500/20 text-red-400"
-                                        : "bg-gray-500/20 text-gray-400"
+                                        ? "bg-rose-100 text-rose-800"
+                                        : "bg-gray-100 text-gray-600"
                                   }`}
                                 >
                                   {si + 1}
                                 </span>
-                                <span className="text-gray-300 flex-1 font-mono text-xs">
+                                <span className="text-gray-800 flex-1 font-mono text-xs">
                                   {step.description || `${step.action} → ${step.target}`}
                                 </span>
                                 <span className="text-xs text-gray-500 font-mono">
@@ -430,7 +430,7 @@ export default function RunDetailPage() {
                                 )}
                               </div>
                               {step.error && (
-                                <div className="ml-8 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-300 font-mono whitespace-pre-wrap">
+                                <div className="ml-8 px-3 py-2 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-800 font-mono whitespace-pre-wrap">
                                   {step.error}
                                 </div>
                               )}
@@ -443,31 +443,31 @@ export default function RunDetailPage() {
                     {/* ─── Healing Events ─── */}
                     {tc.healing_events && tc.healing_events.length > 0 && (
                       <div className="space-y-2">
-                        <h4 className="text-xs font-medium text-yellow-400/90 uppercase tracking-wider">
+                        <h4 className="text-xs font-medium text-amber-800 uppercase tracking-wider">
                           🔧 Self-Healing Events
                         </h4>
                         <div className="space-y-2">
                           {tc.healing_events.map((he) => (
                             <div
                               key={he.id}
-                              className="px-4 py-3 rounded-lg bg-yellow-500/5 border border-yellow-500/15 text-sm"
+                              className="px-4 py-3 rounded-lg bg-amber-50/70 border border-amber-200 text-sm"
                             >
                               <div className="flex items-center justify-between mb-2">
-                                <span className="text-gray-400 text-xs">
+                                <span className="text-gray-600 text-xs font-medium">
                                   Step #{he.step_number}
                                 </span>
-                                <span className="text-yellow-400 font-semibold text-xs">
+                                <span className="text-amber-800 font-semibold text-xs">
                                   {(he.confidence_score * 100).toFixed(1)}% confidence
                                 </span>
                               </div>
                               <div className="grid grid-cols-2 gap-3 font-mono text-xs">
                                 <div>
-                                  <span className="text-red-400">Before:</span>{" "}
-                                  <span className="text-gray-400">{he.original_selector}</span>
+                                  <span className="text-rose-700 font-bold">Before:</span>{" "}
+                                  <span className="text-gray-600">{he.original_selector}</span>
                                 </div>
                                 <div>
-                                  <span className="text-emerald-400">After:</span>{" "}
-                                  <span className="text-gray-300">{he.healed_selector}</span>
+                                  <span className="text-emerald-700 font-bold">After:</span>{" "}
+                                  <span className="text-gray-800">{he.healed_selector}</span>
                                 </div>
                               </div>
                             </div>
@@ -479,7 +479,7 @@ export default function RunDetailPage() {
                     {/* ─── Failure Screenshots ─── */}
                     {tc.screenshots && tc.screenshots.length > 0 && (
                       <div className="space-y-2">
-                        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <h4 className="text-xs font-medium text-gray-600 uppercase tracking-wider">
                           📸 Failure Screenshots
                         </h4>
                         <div className="flex gap-3 flex-wrap">
@@ -489,7 +489,7 @@ export default function RunDetailPage() {
                               href={screenshotUrl(ss.file_path)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="block w-56 h-36 rounded-xl overflow-hidden border border-white/10 hover:border-purple-500/50 transition-all shadow-lg"
+                              className="block w-56 h-36 rounded-xl overflow-hidden border border-emerald-200 hover:border-emerald-400 transition-all shadow-sm"
                             >
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
@@ -509,17 +509,17 @@ export default function RunDetailPage() {
           })}
         </div>
       ) : run.status === "running" || run.status === "queued" ? (
-        <div className="glass-card p-12 text-center space-y-4">
-          <div className="w-10 h-10 mx-auto rounded-full border-2 border-blue-400 border-t-transparent animate-spin" />
+        <div className="glass-card p-12 text-center space-y-4 bg-white border-emerald-100">
+          <div className="w-10 h-10 mx-auto rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
           <div className="space-y-1">
-            <h3 className="text-base font-semibold text-white">Executing Test Suite...</h3>
-            <p className="text-sm text-gray-400 max-w-md mx-auto">
+            <h3 className="text-base font-semibold text-gray-900">Executing Test Suite...</h3>
+            <p className="text-sm text-gray-600 max-w-md mx-auto">
               Playwright browser is navigating target routes, validating assertions, and applying self-healing if selectors broke.
             </p>
           </div>
         </div>
       ) : run.target !== "evaluation" ? (
-        <div className="glass-card p-12 text-center text-gray-500">
+        <div className="glass-card p-12 text-center text-gray-500 bg-white border-emerald-100">
           No test cases found for this run.
         </div>
       ) : null}

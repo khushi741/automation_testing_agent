@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Link from "next/link";
+import { NavLinks } from "./nav-links";
 
 export const metadata: Metadata = {
   title: "AI Self-Healing Test Agent",
@@ -8,15 +9,13 @@ export const metadata: Metadata = {
     "AI-powered browser test automation with self-healing locators, powered by local LLM inference",
 };
 
-import { NavLinks } from "./nav-links";
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
@@ -24,12 +23,12 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased">
+      <body className="antialiased text-[#0f2e22]">
         {/* Navigation */}
-        <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0b0f19]/80 backdrop-blur-xl">
+        <nav className="sticky top-0 z-50 border-b border-emerald-100/90 bg-white/85 backdrop-blur-xl shadow-[0_2px_12px_rgba(16,185,129,0.04)]">
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
                 <svg
                   className="w-4 h-4 text-white"
                   fill="none"
@@ -44,7 +43,7 @@ export default function RootLayout({
                   />
                 </svg>
               </div>
-              <span className="text-lg font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+              <span className="text-lg font-bold bg-gradient-to-r from-emerald-700 via-teal-700 to-green-600 bg-clip-text text-transparent">
                 HealAgent
               </span>
             </Link>

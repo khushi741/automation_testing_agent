@@ -14,11 +14,11 @@ import {
 
 function StatusDot({ status }: { status: string }) {
   const colors: Record<string, string> = {
-    pending: "bg-purple-400",
-    cloning: "bg-blue-400 animate-pulse-dot",
-    analyzing: "bg-yellow-400 animate-pulse-dot",
-    ready: "bg-emerald-400",
-    failed: "bg-red-400",
+    pending: "bg-emerald-400",
+    cloning: "bg-teal-400 animate-pulse-dot",
+    analyzing: "bg-emerald-500 animate-pulse-dot",
+    ready: "bg-emerald-600",
+    failed: "bg-rose-500",
   };
   return (
     <span
@@ -147,7 +147,6 @@ export default function HomePage() {
     try {
       const run = await createTestRun({
         repo_id: repo.id,
-        target: "https://packet-analyzer-9lp9.onrender.com",
         self_healing_enabled: true,
       });
       if (run && run.id) {
@@ -187,28 +186,28 @@ export default function HomePage() {
       
       {/* ─── Hero Section ─── */}
       <section className="relative flex flex-col items-center justify-center text-center pt-10 pb-8 px-4 overflow-hidden">
-        {/* Soft grid background mapping reference */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#a855f7_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black_0%,transparent_100%)] z-0"></div>
+        {/* Soft emerald dot-grid ambient background */}
+        <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(#10b981_1.2px,transparent_1.2px)] [background-size:26px_26px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black_0%,transparent_100%)] z-0"></div>
 
         <div className="relative z-10 max-w-4xl mx-auto space-y-6">
           {/* Badge */}
           <div className="flex justify-center">
-            <span className="relative overflow-hidden inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25 text-xs font-semibold text-purple-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-blink" />
+            <span className="relative overflow-hidden inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-blink" />
               Powered by local LLM + Playwright — now in beta
             </span>
           </div>
 
           {/* Heading */}
-          <h1 className="font-serif text-6xl md:text-8xl tracking-tight leading-[0.95] text-slate-100 max-w-3xl mx-auto">
+          <h1 className="font-serif text-6xl md:text-8xl tracking-tight leading-[0.95] text-[#0f2e22] max-w-3xl mx-auto">
             Connect repo.<br />
-            <span className="bg-gradient-to-r from-purple-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent italic">
+            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 bg-clip-text text-transparent italic">
               AI tests it.
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-gray-400 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
+          <p className="text-gray-600 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
             Connect your GitHub repository, let our AI generate a complete test suite, and watch Playwright execute them locally — with self-healing.
           </p>
 
@@ -216,13 +215,13 @@ export default function HomePage() {
           <div className="flex gap-4 justify-center flex-wrap pt-4">
             <button
               onClick={scrollToConnect}
-              className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-purple-500/20 transform hover:-translate-y-0.5"
+              className="px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-600/20 transform hover:-translate-y-0.5"
             >
               ⬡ Connect GitHub repo →
             </button>
             <a
               href="/evaluation"
-              className="px-8 py-3.5 bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+              className="px-8 py-3.5 bg-white hover:bg-emerald-50/70 text-emerald-900 border border-emerald-200 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-xs hover:border-emerald-300"
             >
               ▶ View Evaluation Suite
             </a>
@@ -231,17 +230,17 @@ export default function HomePage() {
 
         {/* Mock Terminal Console */}
         <div className="relative w-full max-w-3xl mt-16 mx-auto z-10">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-purple-500/10 to-indigo-500/5 filter blur-xl -z-10"></div>
-          <div className="glass-card border-purple-500/15 overflow-hidden text-left shadow-2xl">
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-emerald-500/15 to-teal-500/10 filter blur-xl -z-10"></div>
+          <div className="glass-card border-emerald-200/80 overflow-hidden text-left shadow-xl bg-white/95">
             {/* Header bar */}
-            <div className="flex items-center gap-2 px-5 py-3.5 bg-slate-950/80 border-b border-purple-500/10">
-              <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
-              <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
-              <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
-              <span className="font-mono text-xs text-purple-400/60 ml-3">autotest — zsh</span>
+            <div className="flex items-center gap-2 px-5 py-3.5 bg-emerald-50/80 border-b border-emerald-100">
+              <span className="w-3 h-3 rounded-full bg-rose-400 inline-block" />
+              <span className="w-3 h-3 rounded-full bg-amber-400 inline-block" />
+              <span className="w-3 h-3 rounded-full bg-emerald-400 inline-block" />
+              <span className="font-mono text-xs text-emerald-800/80 font-medium ml-3">autotest — zsh</span>
             </div>
             {/* Logs Area */}
-            <div className="p-6 bg-slate-950/40 min-height-[240px] font-mono text-sm leading-relaxed text-slate-300 overflow-y-auto max-h-[300px]">
+            <div className="p-6 bg-white min-height-[240px] font-mono text-sm leading-relaxed text-gray-700 overflow-y-auto max-h-[300px]">
               {consoleLogs.map((log, index) => {
                 if (!log || typeof log !== "string") return null;
                 const isCmd = log.startsWith("$");
@@ -249,16 +248,16 @@ export default function HomePage() {
                 const isHealed = log.includes("Healed");
                 return (
                   <div key={index} className="flex gap-2">
-                    <span className="text-purple-500/50 select-none">›</span>
+                    <span className="text-emerald-500 select-none font-bold">›</span>
                     <span
                       className={
                         isCmd
-                          ? "text-purple-400 font-semibold"
+                          ? "text-teal-900 font-bold"
                           : isSuccess
-                            ? "text-emerald-400"
+                            ? "text-emerald-700 font-medium"
                             : isHealed
-                              ? "text-yellow-400"
-                              : ""
+                              ? "text-amber-700 font-medium"
+                              : "text-gray-600"
                       }
                     >
                       {log}
@@ -266,7 +265,7 @@ export default function HomePage() {
                   </div>
                 );
               })}
-              <span className="inline-block w-2 h-4 bg-purple-400 animate-blink ml-1 align-middle" />
+              <span className="inline-block w-2 h-4 bg-emerald-500 animate-blink ml-1 align-middle" />
             </div>
           </div>
         </div>
@@ -274,7 +273,7 @@ export default function HomePage() {
 
       {/* ─── Process Flow (How it flows) ─── */}
       <section className="max-w-6xl mx-auto px-4 text-center space-y-12">
-        <p className="font-mono text-xs uppercase tracking-widest text-purple-400/70">
+        <p className="font-mono text-xs uppercase tracking-widest text-emerald-700 font-bold">
           How it flows
         </p>
 
@@ -285,52 +284,52 @@ export default function HomePage() {
               title: "GitHub Repo",
               desc: "Connect and clone projects",
               icon: "⬡",
-              color: "text-purple-400"
+              color: "text-emerald-700"
             },
             {
               step: "02",
               title: "AI Analysis",
               desc: "Map routes and structures",
               icon: "✦",
-              color: "text-indigo-400"
+              color: "text-teal-700"
             },
             {
               step: "03",
               title: "Test Cases",
               desc: "Auto-generate steps",
               icon: "⚙",
-              color: "text-pink-400"
+              color: "text-green-700"
             },
             {
               step: "04",
               title: "Playwright",
               desc: "Fast browser execution",
               icon: "☁",
-              color: "text-blue-400"
+              color: "text-emerald-800"
             },
             {
               step: "05",
               title: "Self-Healing",
               desc: "Fix selectors automatically",
               icon: "✓",
-              color: "text-emerald-400"
+              color: "text-emerald-600"
             }
           ].map((flow, i) => (
             <div key={flow.step} className="flex items-center w-full relative">
               <div className="flex flex-col items-center text-center space-y-3 w-full px-4">
-                <div className={`w-14 h-14 rounded-2xl bg-purple-950/30 border border-purple-500/15 flex items-center justify-center text-2xl ${flow.color} shadow-lg shadow-purple-500/5`}>
+                <div className={`w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-2xl ${flow.color} shadow-sm`}>
                   {flow.icon}
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-slate-200">{flow.title}</h4>
+                  <h4 className="font-semibold text-sm text-gray-900">{flow.title}</h4>
                   <p className="text-xs text-gray-500 mt-1 max-w-[150px] mx-auto leading-relaxed">{flow.desc}</p>
                 </div>
               </div>
 
               {/* Connecting line */}
               {i < 4 && (
-                <div className="hidden md:block absolute right-[-20px] top-[28px] w-10 h-[1px] bg-gradient-to-r from-purple-500/20 to-indigo-500/20 z-0">
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-purple-500/30" />
+                <div className="hidden md:block absolute right-[-20px] top-[28px] w-10 h-[1px] bg-gradient-to-r from-emerald-300 to-teal-300 z-0">
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 </div>
               )}
             </div>
@@ -341,19 +340,19 @@ export default function HomePage() {
       {/* ─── Connection Panel (Active Tool Dashboard) ─── */}
       <section id="connect" ref={connectSectionRef} className="max-w-4xl mx-auto px-4 scroll-mt-24 space-y-6">
         <div>
-          <h2 className="text-3xl font-bold font-serif text-slate-100 flex items-center gap-2">
-            <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold font-serif text-[#0f2e22] flex items-center gap-2">
+            <span className="bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">
               Connect Repository
             </span>
           </h2>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-gray-600 text-sm mt-1">
             Submit a GitHub repository URL to analyze its framework, extract page routes, and generate tests.
           </p>
         </div>
 
         {/* Input Form */}
-        <form onSubmit={handleSubmit} className="glass-card p-6 border-purple-500/10">
-          <label className="block text-sm font-semibold text-purple-300 mb-2">
+        <form onSubmit={handleSubmit} className="glass-card p-6 border-emerald-200/80">
+          <label className="block text-sm font-semibold text-emerald-900 mb-2">
             GitHub Repository URL
           </label>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -364,29 +363,29 @@ export default function HomePage() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://github.com/username/repo"
-              className="flex-1 px-4 py-3 bg-slate-950/40 border border-purple-500/15 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition-all"
+              className="flex-1 px-4 py-3 bg-white border border-emerald-200/90 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-400/20 transition-all shadow-xs"
               required
             />
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-500 hover:to-indigo-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/20 whitespace-nowrap"
+              className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-emerald-600/20 whitespace-nowrap"
             >
               {loading ? "Connecting..." : "Analyze Repo"}
             </button>
           </div>
           {error && (
-            <p className="mt-3 text-sm text-rose-400">{error}</p>
+            <p className="mt-3 text-sm text-rose-600 font-medium">{error}</p>
           )}
         </form>
 
         {/* Status Stepper & Routes Result */}
         {repo && (
-          <div className="glass-card p-6 border-purple-500/10 space-y-6">
-            <div className="flex items-center justify-between border-b border-purple-500/10 pb-4">
+          <div className="glass-card p-6 border-emerald-200/80 space-y-6">
+            <div className="flex items-center justify-between border-b border-emerald-100 pb-4">
               <div className="flex items-center gap-3">
                 <StatusDot status={repo.status} />
-                <h3 className="text-lg font-semibold text-slate-200">
+                <h3 className="text-lg font-semibold text-gray-900">
                   {repo.github_url.split("/").slice(-1)[0]}
                 </h3>
               </div>
@@ -418,13 +417,13 @@ export default function HomePage() {
                   key={step.label}
                   className={`p-4 rounded-xl border text-center transition-all ${
                     step.done
-                      ? "border-emerald-500/25 bg-emerald-500/5 text-emerald-400"
+                      ? "border-emerald-300 bg-emerald-50 text-emerald-800"
                       : step.active
-                        ? "border-purple-500/30 bg-purple-500/5 text-purple-400"
-                        : "border-purple-500/5 bg-white/[0.01] text-gray-500"
+                        ? "border-teal-400 bg-teal-50 text-teal-800"
+                        : "border-gray-200 bg-gray-50/50 text-gray-400"
                   }`}
                 >
-                  <div className="text-xl mb-1">
+                  <div className="text-xl mb-1 font-bold">
                     {step.done ? "✓" : step.active ? "◉" : "○"}
                   </div>
                   <div className="text-xs font-semibold">{step.label}</div>
@@ -436,15 +435,15 @@ export default function HomePage() {
             {repo.status === "ready" && (
               <>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-purple-950/20 border border-purple-500/10">
+                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80">
                     <div className="text-xs text-gray-500 mb-1">Framework Detected</div>
-                    <div className="text-base font-semibold text-purple-400 capitalize">
+                    <div className="text-base font-semibold text-emerald-900 capitalize">
                       {repo.framework_detected || "Unknown"}
                     </div>
                   </div>
-                  <div className="p-4 rounded-xl bg-purple-950/20 border border-purple-500/10">
+                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80">
                     <div className="text-xs text-gray-500 mb-1">Routes Found</div>
-                    <div className="text-base font-semibold text-emerald-400">
+                    <div className="text-base font-semibold text-emerald-700">
                       {repo.routes_json?.length || 0}
                     </div>
                   </div>
@@ -453,31 +452,31 @@ export default function HomePage() {
                 {/* Scanned Routes List */}
                 {repo.routes_json && repo.routes_json.length > 0 && (
                   <div className="space-y-2">
-                    <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Routes List
                     </h4>
-                    <div className="rounded-xl border border-purple-500/10 overflow-hidden bg-slate-950/20">
+                    <div className="rounded-xl border border-emerald-200/80 overflow-hidden bg-white shadow-xs">
                       <table className="w-full text-xs text-left">
                         <thead>
-                          <tr className="bg-purple-950/30 border-b border-purple-500/10">
-                            <th className="px-4 py-2.5 text-gray-400 font-semibold">Path</th>
-                            <th className="px-4 py-2.5 text-gray-400 font-semibold">Method</th>
-                            <th className="px-4 py-2.5 text-gray-400 font-semibold">Source Code File</th>
+                          <tr className="bg-emerald-50/90 border-b border-emerald-100">
+                            <th className="px-4 py-2.5 text-emerald-900 font-semibold">Path</th>
+                            <th className="px-4 py-2.5 text-emerald-900 font-semibold">Method</th>
+                            <th className="px-4 py-2.5 text-emerald-900 font-semibold">Source Code File</th>
                           </tr>
                         </thead>
                         <tbody>
                           {repo.routes_json.map((route: Route, i: number) => (
                             <tr
                               key={i}
-                              className="border-b border-purple-500/5 hover:bg-purple-500/5"
+                              className="border-b border-emerald-50 hover:bg-emerald-50/50 transition-colors"
                             >
-                              <td className="px-4 py-2.5 font-mono text-purple-300">{route.path}</td>
+                              <td className="px-4 py-2.5 font-mono text-emerald-800 font-semibold">{route.path}</td>
                               <td className="px-4 py-2.5">
-                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 border border-purple-500/15 text-purple-300">
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 border border-emerald-200 text-emerald-800">
                                   {route.method}
                                 </span>
                               </td>
-                              <td className="px-4 py-2.5 text-gray-500 font-mono">{route.file}</td>
+                              <td className="px-4 py-2.5 text-gray-600 font-mono">{route.file}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -491,7 +490,7 @@ export default function HomePage() {
                   <button
                     onClick={handleGenerateTests}
                     disabled={generating}
-                    className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-lg shadow-purple-500/20"
+                    className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-md shadow-emerald-600/20"
                   >
                     {generating ? "Generating Test Cases..." : "🤖 Generate Test Cases with AI"}
                   </button>
@@ -500,20 +499,20 @@ export default function HomePage() {
                 {/* Generated cases view & execute button */}
                 {repo.generated_cases && repo.generated_cases.length > 0 && (
                   <div className="space-y-4 pt-2">
-                    <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Generated Scenarios ({repo.generated_cases.length})
                     </h4>
                     <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
                       {repo.generated_cases.map((tc) => (
                         <div
                           key={tc.id}
-                          className="p-3.5 rounded-xl bg-purple-950/10 border border-purple-500/10 flex items-start gap-3"
+                          className="p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-100 flex items-start gap-3"
                         >
-                          <span className="text-purple-400 font-bold">▸</span>
+                          <span className="text-emerald-600 font-bold">▸</span>
                           <div className="space-y-0.5">
-                            <p className="text-sm text-slate-200 leading-snug">{tc.description}</p>
+                            <p className="text-sm text-gray-800 leading-snug">{tc.description}</p>
                             {tc.source_route && (
-                              <p className="text-[10px] text-purple-400/60 font-mono">
+                              <p className="text-[10px] text-emerald-700 font-mono">
                                 Target Route: {tc.source_route}
                               </p>
                             )}
@@ -525,7 +524,7 @@ export default function HomePage() {
                     <button
                       onClick={handleRunTests}
                       disabled={runStarted}
-                      className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/15"
+                      className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-md shadow-emerald-600/20"
                     >
                       {runStarted ? "🚀 Launching & Redirecting to Test Run..." : "🚀 Execute AI Test Suite"}
                     </button>
@@ -540,11 +539,11 @@ export default function HomePage() {
       {/* ─── Capabilities Section ─── */}
       <section className="max-w-6xl mx-auto px-4 space-y-12">
         <div className="text-center space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/15 text-xs text-purple-300 font-semibold">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-semibold shadow-xs">
             Capabilities
           </span>
-          <h3 className="font-serif text-4xl text-slate-100">Everything in one pipeline</h3>
-          <p className="text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
+          <h3 className="font-serif text-4xl text-[#0f2e22]">Everything in one pipeline</h3>
+          <p className="text-sm text-gray-600 max-w-md mx-auto leading-relaxed">
             From framework route scanning to dynamic self-healing runs — no configurations needed.
           </p>
         </div>
@@ -582,12 +581,12 @@ export default function HomePage() {
               desc: "Features a 20-scenario comparison run comparing normal runs against heals and failures."
             }
           ].map((cap) => (
-            <div key={cap.title} className="glass-card p-6 border-purple-500/5 hover:border-purple-500/20 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/15 flex items-center justify-center text-lg text-purple-300">
+            <div key={cap.title} className="glass-card p-6 border-emerald-100/90 hover:border-emerald-300 space-y-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-lg text-emerald-700">
                 {cap.icon}
               </div>
-              <h4 className="font-semibold text-sm text-slate-200">{cap.title}</h4>
-              <p className="text-xs text-gray-500 leading-relaxed">{cap.desc}</p>
+              <h4 className="font-semibold text-sm text-gray-900">{cap.title}</h4>
+              <p className="text-xs text-gray-600 leading-relaxed">{cap.desc}</p>
             </div>
           ))}
         </div>
