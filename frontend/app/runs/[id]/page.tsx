@@ -45,15 +45,16 @@ export default function RunDetailPage() {
     setTimeout(() => setCopiedId(null), 2500);
   }
 
+  const [loadError, setLoadError] = useState<string | null>(null);
+
   async function loadRun() {
     try {
       const data = await getTestRun(runId);
       setRun(data);
-      if (data.status === "completed" || data.status === "failed") {
-        // Stop polling
-      }
-    } catch {
-      // ignore
+      setLoadError(null);
+    } catch (err: unknown) {
+      const error = err as Error;
+      setLoadError(error.message || "Run not found");
     } finally {
       setLoading(false);
     }
@@ -62,22 +63,74 @@ export default function RunDetailPage() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadRun();
-    const interval = setInterval(loadRun, 3000);
+    const interval = setInterval(async () => {
+      try {
+        const data = await getTestRun(runId);
+        setRun(data);
+        if (data.status === "completed" || data.status === "failed") {
+          clearInterval(interval);
+        }
+      } catch {
+        clearInterval(interval);
+      }
+    }, 3000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runId]);
 
   if (loading) {
     return (
-      <div className="text-center py-20 text-gray-500">
-        Loading run details...
+      <div className="glass-card p-16 text-center max-w-lg mx-auto my-12 space-y-4 bg-white/95 border-emerald-200 shadow-md">
+        <div className="w-10 h-10 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
+        <div className="space-y-1">
+          <h3 className="font-bold text-gray-900 text-lg">Connecting to Test Runner...</h3>
+          <p className="text-xs text-gray-600 leading-relaxed max-w-sm mx-auto">
+            Fetching run status and execution logs. If the cloud container is waking up from idle, this may take a moment.
+          </p>
+        </div>
       </div>
     );
   }
 
-  if (!run) {
+  if (!run || loadError) {
     return (
-      <div className="text-center py-20 text-gray-500">Run not found.</div>
+      <div className="glass-card p-12 text-center max-w-xl mx-auto my-12 space-y-6 bg-white/95 border-emerald-200 shadow-md">
+        <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-3xl mx-auto shadow-2xs">
+          🔍
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-extrabold text-[#0a291e]">
+            Test Run Not Found or Expired
+          </h2>
+          <p className="text-sm text-gray-600 leading-relaxed max-w-md mx-auto">
+            Run ID <code className="font-mono text-emerald-900 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-200 text-xs font-bold">{runId}</code> does not exist in the active database.
+          </p>
+          <p className="text-xs text-gray-500 max-w-sm mx-auto">
+            On cloud free tiers, previous test sessions are cleared whenever the container redeploys or restarts with a fresh database.
+          </p>
+        </div>
+
+        <div className="flex items-center justify-center gap-3 flex-wrap pt-2">
+          <Link
+            href="/runs"
+            className="px-5 py-2.5 btn-frosted-green font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-2xs"
+          >
+            ← View Active Test Runs
+          </Link>
+          <Link
+            href="/#connect"
+            className="px-5 py-2.5 btn-emerald-glow font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-xs"
+          >
+            ⚡ Start a New Test
+          </Link>
+          <Link
+            href="/evaluation"
+            className="px-5 py-2.5 bg-white border border-emerald-200 hover:bg-emerald-50 text-emerald-900 font-bold rounded-xl text-xs transition-colors"
+          >
+            📊 Run Evaluation Suite
+          </Link>
+        </div>
+      </div>
     );
   }
 
