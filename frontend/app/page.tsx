@@ -147,6 +147,7 @@ export default function HomePage() {
     try {
       const run = await createTestRun({
         repo_id: repo.id,
+        target: "https://packet-analyzer-9lp9.onrender.com",
         self_healing_enabled: true,
       });
       if (run && run.id) {

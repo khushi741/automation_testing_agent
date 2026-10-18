@@ -171,13 +171,38 @@ def _process_test_run_job(job: dict, browser):
 
         for tc in cases:
             scenario = tc.description
-            scenario = scenario.replace("localhost:5000", "localhost:8000")
+
+            # Resolve actual target URL (use run.target or fallback to live deployed Packet_analyzer)
+            target_url = None
+            if run.target and (run.target.startswith("http://") or run.target.startswith("https://")):
+                target_url = run.target.rstrip('/')
+            elif run.repo_id:
+                repo_obj = db.query(Repo).filter(Repo.id == run.repo_id).first()
+                if repo_obj and "packet_analyzer" in (repo_obj.github_url or "").lower():
+                    target_url = "https://packet-analyzer-9lp9.onrender.com"
+
+            if not target_url and any(r in scenario for r in ["/predict-flow", "/api/analytics", "/calculator", "/dashboard"]):
+                target_url = "https://packet-analyzer-9lp9.onrender.com"
+
+            if target_url:
+                for bad_origin in [
+                    "http://localhost:3000",
+                    "http://localhost:8000",
+                    "http://localhost:5000",
+                    "http://127.0.0.1:3000",
+                    "http://127.0.0.1:8000",
+                    "http://127.0.0.1:5000",
+                    "https://localhost:3000",
+                    "https://localhost:8000",
+                ]:
+                    scenario = scenario.replace(bad_origin, target_url)
+                if "http://" not in scenario and "https://" not in scenario:
+                    scenario = f"Navigate to {target_url}, {scenario}"
+            else:
+                scenario = scenario.replace("localhost:5000", "localhost:8000")
+
             if job.get("broken") and "?broken=true" not in scenario:
                 scenario = scenario.replace("/demo/login", "/demo/login?broken=true")
-
-            # If scenario lacks navigation and run has a target URL, navigate first
-            if "http://" not in scenario and "https://" not in scenario and run.target and (run.target.startswith("http://") or run.target.startswith("https://")):
-                scenario = f"Navigate to {run.target}, {scenario}"
 
             try:
                 result = run_test_case(
