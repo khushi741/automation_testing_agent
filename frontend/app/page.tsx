@@ -210,45 +210,38 @@ export default function HomePage() {
           
           {/* Top Pill Badge */}
           <div className="flex justify-center">
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/95 border border-emerald-300/80 shadow-[0_4px_20px_rgba(16,185,129,0.18)] text-xs font-semibold text-emerald-950 backdrop-blur-md">
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span>Next-Gen Autonomous Browser Testing</span>
-              <span className="text-emerald-700 font-bold bg-emerald-100/80 px-2 py-0.5 rounded-full text-[10px]">
-                v2.0 Beta
-              </span>
-            </div>
+            <span className="relative overflow-hidden inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-emerald-300/80 shadow-[0_4px_20px_rgba(16,185,129,0.15)] text-xs font-semibold text-emerald-900 backdrop-blur-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-blink" />
+              Powered by local LLM + Playwright — now in beta
+            </span>
           </div>
 
           {/* Heading */}
-          <h1 className="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-[1.0] text-[#0a291e]">
-            Autonomous tests.<br />
-            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-500 bg-clip-text text-transparent italic">
-              Zero broken locators.
+          <h1 className="font-serif text-6xl md:text-8xl tracking-tight leading-[0.95] text-[#0a291e] max-w-3xl mx-auto">
+            Connect repo.<br />
+            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 bg-clip-text text-transparent italic">
+              AI tests it.
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-emerald-950/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-normal">
-            Connect any GitHub repository. Our agent scans framework routes, generates complete browser test suites, and heals mutated selectors using local embedding models.
+          <p className="text-gray-600 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
+            Connect your GitHub repository, let our AI generate a complete test suite, and watch Playwright execute them locally — with self-healing.
           </p>
 
           {/* Action Buttons */}
           <div className="flex gap-4 justify-center flex-wrap pt-2">
             <button
               onClick={scrollToConnect}
-              className="px-8 py-3.5 btn-emerald-glow font-bold rounded-xl text-base flex items-center gap-2 cursor-pointer"
+              className="px-8 py-3.5 btn-emerald-glow font-bold rounded-xl text-base flex items-center gap-2 cursor-pointer shadow-md"
             >
-              <span>⚡ Connect GitHub Repo</span>
-              <span>→</span>
+              ⬡ Connect GitHub repo →
             </button>
             <a
               href="/evaluation"
               className="px-8 py-3.5 btn-frosted-green font-bold rounded-xl text-base flex items-center justify-center gap-2"
             >
-              <span>📊 View 20-Case Benchmark</span>
+              ▶ View Evaluation Suite
             </a>
           </div>
 
@@ -759,15 +752,13 @@ export default function HomePage() {
 
       {/* ─── Capabilities Feature Matrix ─── */}
       <section className="max-w-6xl mx-auto px-4 space-y-10">
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-xs text-emerald-900 font-bold border border-emerald-300">
-            Engine Architecture
+            Capabilities
           </span>
-          <h3 className="text-3xl sm:text-4xl font-extrabold text-[#0a291e] tracking-tight">
-            High-performance autonomous testing pipeline
-          </h3>
-          <p className="text-sm text-gray-600 max-w-lg mx-auto leading-relaxed">
-            Engineered to remove flakiness and automate end-to-end browser assertions with zero manual maintenance.
+          <h3 className="font-serif text-4xl text-[#0a291e]">Everything in one pipeline</h3>
+          <p className="text-sm text-gray-600 max-w-md mx-auto leading-relaxed">
+            From framework route scanning to dynamic self-healing runs — no configurations needed.
           </p>
         </div>
 
