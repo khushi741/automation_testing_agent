@@ -54,8 +54,13 @@ def execute_step(page, step: TestStep, timeout: int = PLAYWRIGHT_TIMEOUT) -> boo
 
     if action == "navigate":
         # Navigating is always successful if it completes without throwing
-        page.goto(target, timeout=timeout)
-        page.wait_for_load_state("networkidle", timeout=timeout)
+        # Cloud/remote hosts require sufficient timeout for DNS/TLS/Render cold-starts
+        nav_timeout = 25000 if ("http://" in str(target) or "https://" in str(target)) else max(timeout, 15000)
+        page.goto(target, timeout=nav_timeout, wait_until="domcontentloaded")
+        try:
+            page.wait_for_load_state("load", timeout=5000)
+        except Exception:
+            pass
         return True
 
     elif action == "click":
