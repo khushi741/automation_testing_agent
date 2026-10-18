@@ -9,6 +9,10 @@ class RepoCreate(BaseModel):
     github_url: str
 
 
+class GenerateTestsRequest(BaseModel):
+    base_url: Optional[str] = None
+
+
 class TestRunCreate(BaseModel):
     repo_id: Optional[str] = None
     target: Optional[str] = None

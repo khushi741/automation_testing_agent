@@ -89,8 +89,11 @@ export async function analyzeRepo(id: string): Promise<void> {
   await fetchApi(`/api/repos/${id}/analyze`, { method: "POST" });
 }
 
-export async function generateTests(id: string): Promise<void> {
-  await fetchApi(`/api/repos/${id}/generate-tests`, { method: "POST" });
+export async function generateTests(id: string, base_url?: string): Promise<void> {
+  await fetchApi(`/api/repos/${id}/generate-tests`, {
+    method: "POST",
+    body: JSON.stringify(base_url ? { base_url } : {}),
+  });
 }
 
 // ─── Test Runs ───────────────────────────────────────────────────────────────

@@ -25,7 +25,7 @@ from database import engine, Base, get_db, SessionLocal
 from models import Repo, TestRun, TestCase, HealingEvent, Screenshot, GeneratedTestCase
 from schemas import (
     RepoCreate, RepoOut, TestRunCreate, TestRunOut, TestRunSummary,
-    EvalResultsOut, GeneratedTestCaseOut
+    EvalResultsOut, GeneratedTestCaseOut, GenerateTestsRequest
 )
 from src.config import (
     PLAYWRIGHT_HEADLESS, PLAYWRIGHT_SLOW_MO, SCRATCH_DIR,
@@ -518,18 +518,24 @@ def _bg_analyze_repo(repo_id: str):
 
 
 @app.post("/api/repos/{repo_id}/generate-tests")
-async def generate_tests_endpoint(repo_id: str, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+async def generate_tests_endpoint(
+    repo_id: str,
+    background_tasks: BackgroundTasks,
+    body: Optional[GenerateTestsRequest] = None,
+    db: Session = Depends(get_db)
+):
     repo = db.query(Repo).filter(Repo.id == repo_id).first()
     if not repo:
         raise HTTPException(status_code=404, detail="Repo not found")
     if not repo.routes_json:
         raise HTTPException(status_code=400, detail="Repo has not been analyzed yet")
 
-    background_tasks.add_task(_bg_generate_tests, repo_id)
+    target_base = body.base_url if body else None
+    background_tasks.add_task(_bg_generate_tests, repo_id, target_base)
     return {"message": "Test generation started", "repo_id": repo_id}
 
 
-def _bg_generate_tests(repo_id: str):
+def _bg_generate_tests(repo_id: str, base_url: Optional[str] = None):
     """Background task: generate test cases from analyzed routes."""
     db = SessionLocal()
     try:
@@ -537,9 +543,26 @@ def _bg_generate_tests(repo_id: str):
         if not repo or not repo.routes_json:
             return
 
+        effective_base_url = base_url
+        if not effective_base_url:
+            gh_lower = (repo.github_url or "").lower()
+            if "packet_analyzer" in gh_lower or "packet-analyzer" in gh_lower:
+                effective_base_url = "https://packet-analyzer-9lp9.onrender.com"
+            elif repo.framework_detected in ["fastapi", "django"]:
+                effective_base_url = "http://localhost:8000"
+            elif repo.framework_detected == "flask":
+                effective_base_url = "http://localhost:5000"
+            else:
+                effective_base_url = "http://localhost:3000"
+
+        # Clear previously generated cases to avoid stale/duplicate tests
+        db.query(GeneratedTestCase).filter(GeneratedTestCase.repo_id == repo_id).delete()
+        db.commit()
+
         cases = generate_tests_for_routes(
             routes=repo.routes_json,
-            framework=repo.framework_detected or "unknown"
+            framework=repo.framework_detected or "unknown",
+            base_url=effective_base_url
         )
 
         for c in cases:
@@ -551,7 +574,7 @@ def _bg_generate_tests(repo_id: str):
             db.add(gen_case)
 
         db.commit()
-        logger.info(f"Generated {len(cases)} test cases for repo {repo_id}")
+        logger.info(f"Generated {len(cases)} test cases for repo {repo_id} with base_url {effective_base_url}")
 
     except Exception as e:
         logger.error(f"Test generation failed: {e}")

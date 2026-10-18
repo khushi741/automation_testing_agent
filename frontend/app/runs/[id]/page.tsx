@@ -21,6 +21,7 @@ export default function RunDetailPage() {
   const [diagnostics, setDiagnostics] = useState<Record<string, CaseDiagnostic>>({});
   const [loadingDiag, setLoadingDiag] = useState<Record<string, boolean>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   async function toggleCase(tcId: string) {
     const nextState = !expandedCases[tcId];
@@ -77,6 +78,15 @@ export default function RunDetailPage() {
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runId]);
+
+  // Live timer for active runs so users see second-by-second updates
+  useEffect(() => {
+    if (run?.status !== "running") return;
+    const timer = setInterval(() => {
+      setElapsedSeconds((prev) => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [run?.status]);
 
   if (loading) {
     return (
@@ -139,6 +149,20 @@ export default function RunDetailPage() {
       ? ((run.pass_count / (run.pass_count + run.fail_count)) * 100).toFixed(1)
       : "0.0";
 
+  const isRunning = run.status === "running";
+  const isQueued = run.status === "queued";
+  const totalCases = run.test_cases?.length || (run.pass_count + run.fail_count + run.heal_count) || 1;
+  const completedCases = run.pass_count + run.fail_count + run.heal_count;
+  const currentRunningIdx = isRunning && run.test_cases
+    ? run.test_cases.findIndex((tc) => tc.status === "pending" || tc.status === "running")
+    : -1;
+  const currentRunningCase = currentRunningIdx !== -1 && run.test_cases
+    ? run.test_cases[currentRunningIdx]
+    : null;
+  const progressPercent = totalCases > 0
+    ? Math.min(100, Math.round((completedCases / totalCases) * 100))
+    : (isRunning ? 10 : 0);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -166,12 +190,118 @@ export default function RunDetailPage() {
             • Self-Healing: <span className="font-medium text-emerald-800">{run.self_healing_enabled ? "On" : "Off"}</span>
           </p>
         </div>
-        <span
-          className={`badge badge-${run.status}`}
-        >
-          {run.status}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className={`badge badge-${run.status} ${
+              isRunning
+                ? "ring-2 ring-emerald-400 bg-emerald-50 text-emerald-900 font-bold shadow-md shadow-emerald-500/20"
+                : ""
+            }`}
+          >
+            {isRunning && (
+              <span className="relative flex h-2.5 w-2.5 mr-0.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span>
+              </span>
+            )}
+            {isRunning ? "RUNNING (LIVE)" : run.status}
+          </span>
+        </div>
       </div>
+
+      {/* ─── Active Execution Live Banner ─── */}
+      {isRunning && (
+        <div className="glass-card p-6 border-emerald-300 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/5 relative overflow-hidden shadow-lg shadow-emerald-500/5 space-y-4">
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-green-500 animate-pulse" />
+
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-white border border-emerald-200 shadow-sm shrink-0">
+                <span className="text-2xl animate-bounce">⚡</span>
+                <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+                </span>
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-base font-extrabold text-[#0a291e] flex items-center gap-1.5">
+                    Autonomous AI Test Agent is Running...
+                  </h3>
+                  <span className="text-[11px] px-2.5 py-0.5 rounded-full font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 animate-pulse">
+                    LIVE PLAYWRIGHT SESSION
+                  </span>
+                </div>
+                <p className="text-xs text-gray-600 mt-1 flex items-center gap-2 flex-wrap">
+                  <span>Executing headless browser actions</span>
+                  <span>•</span>
+                  <span className="font-mono font-semibold text-emerald-800">
+                    {currentRunningIdx !== -1
+                      ? `Testing Scenario #${currentRunningIdx + 1} of ${totalCases}`
+                      : "Orchestrating test suite..."}
+                  </span>
+                  <span>•</span>
+                  <span className="text-emerald-700 font-medium">Self-Healing Engine Armed</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 sm:text-right">
+              <div className="bg-white/80 border border-emerald-200 px-3 py-1.5 rounded-xl shadow-2xs font-mono text-xs">
+                <div className="font-bold text-emerald-900">
+                  {completedCases} / {totalCases} Done ({progressPercent}%)
+                </div>
+                <div className="text-[10px] text-gray-500 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
+                  ⏱ {elapsedSeconds}s elapsed
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Animated Progress Bar */}
+          <div className="space-y-1.5">
+            <div className="w-full h-3 bg-emerald-100/90 rounded-full overflow-hidden relative shadow-inner p-0.5 border border-emerald-200/60">
+              <div
+                className="h-full bg-gradient-to-r from-emerald-600 via-teal-500 to-green-500 rounded-full transition-all duration-700 ease-out relative"
+                style={{ width: `${Math.max(progressPercent, 10)}%` }}
+              >
+                <div className="absolute inset-0 bg-white/40 animate-shimmer" />
+              </div>
+            </div>
+          </div>
+
+          {/* Current Target Live Ticker */}
+          <div className="flex items-center justify-between text-xs text-gray-700 font-mono bg-white/80 p-2.5 rounded-xl border border-emerald-100 shadow-2xs flex-wrap gap-2">
+            <div className="flex items-center gap-2 truncate max-w-xl">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
+              <span className="font-bold text-emerald-900">Current Target:</span>
+              <span className="truncate text-gray-700">
+                {currentRunningCase ? currentRunningCase.description : "Initializing browser page context..."}
+              </span>
+            </div>
+            <div className="text-[11px] text-emerald-800 font-semibold flex items-center gap-1.5 shrink-0">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Auto-refreshing every 3s
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Queued Banner ─── */}
+      {isQueued && (
+        <div className="glass-card p-5 border-amber-300 bg-amber-50/60 flex items-center gap-3.5 shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-xl shrink-0 animate-pulse">
+            ⏳
+          </div>
+          <div className="space-y-0.5">
+            <h4 className="text-sm font-bold text-amber-950">Test Run Queued</h4>
+            <p className="text-xs text-amber-900 leading-relaxed">
+              Waiting for the background browser worker thread to pick up this job. Execution will start automatically in a moment.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -203,7 +333,9 @@ export default function RunDetailPage() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className={`glass-card p-5 text-center bg-white border-emerald-100 ${stat.glow}`}
+            className={`glass-card p-5 text-center bg-white border-emerald-100 ${stat.glow} ${
+              isRunning ? "border-emerald-200/80 shadow-xs" : ""
+            }`}
           >
             <div className={`text-3xl font-bold ${stat.color}`}>
               {stat.value}
@@ -239,24 +371,35 @@ export default function RunDetailPage() {
       {/* Test Cases */}
       {run.test_cases && run.test_cases.length > 0 ? (
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-gray-800">
-            Test Cases ({run.test_cases.length})
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-800">
+              Test Cases ({run.test_cases.length})
+            </h2>
+            {isRunning && (
+              <span className="text-xs text-emerald-800 font-mono flex items-center gap-1.5 font-semibold bg-emerald-100/80 px-2.5 py-1 rounded-full border border-emerald-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
+                Live Agent Interacting...
+              </span>
+            )}
+          </div>
 
           {run.test_cases.map((tc, idx) => {
             const isExpanded = !!expandedCases[tc.id];
             const diag = diagnostics[tc.id];
             const isLoadingDiag = loadingDiag[tc.id];
+            const isThisCaseRunning = isRunning && idx === currentRunningIdx;
 
             return (
               <div
                 key={tc.id}
                 className={`glass-card transition-all duration-200 border bg-white ${
-                  tc.status === "failed"
-                    ? "border-rose-200 hover:border-rose-300"
-                    : tc.status === "healed"
-                      ? "border-amber-200 hover:border-amber-300"
-                      : "border-emerald-100 hover:border-emerald-300"
+                  isThisCaseRunning
+                    ? "border-emerald-400 ring-2 ring-emerald-400/80 bg-gradient-to-r from-emerald-50/60 via-teal-50/20 to-white shadow-lg shadow-emerald-500/10"
+                    : tc.status === "failed"
+                      ? "border-rose-200 hover:border-rose-300"
+                      : tc.status === "healed"
+                        ? "border-amber-200 hover:border-amber-300"
+                        : "border-emerald-100 hover:border-emerald-300"
                 }`}
               >
                 {/* Clickable Header */}
@@ -273,7 +416,13 @@ export default function RunDetailPage() {
                         <p className="text-gray-900 font-medium text-sm leading-snug">
                           {tc.description}
                         </p>
-                        <div className="flex items-center gap-2 flex-wrap">
+                        {isThisCaseRunning && (
+                          <div className="flex items-center gap-2 pt-1 text-xs text-emerald-800 font-semibold animate-pulse">
+                            <span className="w-3.5 h-3.5 rounded-full border-2 border-emerald-600 border-t-transparent animate-spin inline-block" />
+                            <span>Browser agent active • Interacting with page & validating elements...</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2 flex-wrap pt-0.5">
                           {tc.source_route && (
                             <span className="text-[11px] text-emerald-800 font-mono px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200">
                               Route: {tc.source_route}
@@ -289,9 +438,16 @@ export default function RunDetailPage() {
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className={`badge badge-${tc.status}`}>
-                        {tc.status}
-                      </span>
+                      {isThisCaseRunning ? (
+                        <span className="badge badge-running ring-1 ring-emerald-400/80 bg-emerald-100 text-emerald-950 font-extrabold flex items-center gap-1.5 shadow-2xs">
+                          <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping shrink-0" />
+                          EXECUTING NOW
+                        </span>
+                      ) : (
+                        <span className={`badge badge-${tc.status}`}>
+                          {tc.status}
+                        </span>
+                      )}
                       <button
                         type="button"
                         className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${

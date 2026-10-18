@@ -31,6 +31,7 @@ export default function HomePage() {
   const router = useRouter();
   const [url, setUrl] = useState("");
   const [repo, setRepo] = useState<Repo | null>(null);
+  const [targetBaseUrl, setTargetBaseUrl] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [generating, setGenerating] = useState(false);
@@ -105,6 +106,21 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repo?.id, repo?.status]);
 
+  useEffect(() => {
+    if (repo && repo.status === "ready" && !targetBaseUrl) {
+      const ghLower = (repo.github_url || "").toLowerCase();
+      if (ghLower.includes("packet_analyzer") || ghLower.includes("packet-analyzer")) {
+        setTargetBaseUrl("https://packet-analyzer-9lp9.onrender.com");
+      } else if (repo.framework_detected === "fastapi" || repo.framework_detected === "django") {
+        setTargetBaseUrl("http://localhost:8000");
+      } else if (repo.framework_detected === "flask") {
+        setTargetBaseUrl("http://localhost:5000");
+      } else {
+        setTargetBaseUrl("http://localhost:3000");
+      }
+    }
+  }, [repo, targetBaseUrl]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!url.trim()) return;
@@ -130,7 +146,7 @@ export default function HomePage() {
     if (!repo) return;
     setGenerating(true);
     try {
-      await generateTests(repo.id);
+      await generateTests(repo.id, targetBaseUrl || undefined);
       await new Promise((r) => setTimeout(r, 3000));
       const updated = await getRepo(repo.id);
       setRepo(updated);
@@ -148,6 +164,7 @@ export default function HomePage() {
     try {
       const run = await createTestRun({
         repo_id: repo.id,
+        target: targetBaseUrl || undefined,
         self_healing_enabled: true,
       });
       if (run && run.id) {
@@ -686,6 +703,70 @@ export default function HomePage() {
                     </div>
                   </div>
                 )}
+
+                {/* Target Application Base URL Config */}
+                <div className="p-4 rounded-xl bg-white border border-emerald-200/90 shadow-2xs space-y-2.5">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <label className="text-xs font-bold text-emerald-950 uppercase tracking-wider flex items-center gap-1.5">
+                      <span>🌐 Target Base URL</span>
+                    </label>
+                    <span className="text-[11px] text-gray-500">Destination host where tests execute</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="url"
+                      value={targetBaseUrl}
+                      onChange={(e) => setTargetBaseUrl(e.target.value)}
+                      placeholder="e.g. https://packet-analyzer-9lp9.onrender.com or http://localhost:8001"
+                      className="flex-1 px-3.5 py-2.5 bg-emerald-50/40 border border-emerald-300 rounded-xl text-gray-900 font-mono text-xs focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-400/25 transition-all shadow-2xs"
+                    />
+                    {repo.generated_cases && repo.generated_cases.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={handleGenerateTests}
+                        disabled={generating}
+                        className="px-3.5 py-2.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold rounded-xl text-xs border border-emerald-300 transition-all flex items-center gap-1 shrink-0 cursor-pointer shadow-2xs"
+                        title="Re-synthesize tests with this updated base URL"
+                      >
+                        <span>🔄 Update URL</span>
+                      </button>
+                    )}
+                  </div>
+                  {/* Preset quick selection pills */}
+                  <div className="flex items-center gap-1.5 flex-wrap text-[11px]">
+                    <span className="text-gray-500 font-medium">Quick presets:</span>
+                    {repo.github_url && repo.github_url.toLowerCase().includes("packet_analyzer") && (
+                      <button
+                        type="button"
+                        onClick={() => setTargetBaseUrl("https://packet-analyzer-9lp9.onrender.com")}
+                        className="px-2 py-0.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-mono font-semibold transition-colors cursor-pointer"
+                      >
+                        Render (packet-analyzer-9lp9)
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setTargetBaseUrl("http://localhost:8001")}
+                      className="px-2 py-0.5 rounded-lg bg-gray-50 hover:bg-emerald-50 border border-gray-200 text-gray-700 hover:text-emerald-800 font-mono transition-colors cursor-pointer"
+                    >
+                      Port 8001
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTargetBaseUrl("http://localhost:8000")}
+                      className="px-2 py-0.5 rounded-lg bg-gray-50 hover:bg-emerald-50 border border-gray-200 text-gray-700 hover:text-emerald-800 font-mono transition-colors cursor-pointer"
+                    >
+                      Port 8000
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTargetBaseUrl("http://localhost:3000")}
+                      className="px-2 py-0.5 rounded-lg bg-gray-50 hover:bg-emerald-50 border border-gray-200 text-gray-700 hover:text-emerald-800 font-mono transition-colors cursor-pointer"
+                    >
+                      Port 3000
+                    </button>
+                  </div>
+                </div>
 
                 {/* Action button to generate tests */}
                 {(!repo.generated_cases || repo.generated_cases.length === 0) && (
