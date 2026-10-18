@@ -37,6 +37,7 @@ export default function HomePage() {
   const [runStarted, setRunStarted] = useState(false);
   const pollRef = useRef<NodeJS.Timeout | null>(null);
   const connectSectionRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Mock console log simulation
   const [consoleLogs, setConsoleLogs] = useState<string[]>([]);
@@ -160,7 +161,25 @@ export default function HomePage() {
 
   const scrollToConnect = () => {
     connectSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 300);
   };
+
+  useEffect(() => {
+    const checkHashAndScroll = () => {
+      if (typeof window !== "undefined" && window.location.hash === "#connect") {
+        connectSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 300);
+      }
+    };
+
+    checkHashAndScroll();
+    window.addEventListener("hashchange", checkHashAndScroll);
+    return () => window.removeEventListener("hashchange", checkHashAndScroll);
+  }, []);
 
   return (
     <div className="space-y-20 pb-20">
@@ -319,7 +338,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Connection Panel (Active Tool Dashboard) ─── */}
-      <section ref={connectSectionRef} className="max-w-4xl mx-auto px-4 scroll-mt-24 space-y-6">
+      <section id="connect" ref={connectSectionRef} className="max-w-4xl mx-auto px-4 scroll-mt-24 space-y-6">
         <div>
           <h2 className="text-3xl font-bold font-serif text-slate-100 flex items-center gap-2">
             <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
@@ -338,11 +357,13 @@ export default function HomePage() {
           </label>
           <div className="flex flex-col sm:flex-row gap-3">
             <input
+              id="repo-url-input"
+              ref={inputRef}
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://github.com/username/repo"
-              className="flex-1 px-4 py-3 bg-slate-950/40 border border-purple-500/15 rounded-xl text-white placeholder-gray-600 focus:outline-none transition-all"
+              className="flex-1 px-4 py-3 bg-slate-950/40 border border-purple-500/15 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400/50 transition-all"
               required
             />
             <button

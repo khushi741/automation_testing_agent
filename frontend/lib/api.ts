@@ -41,6 +41,7 @@ export interface CaseDiagnostic {
   severity: string;
   fix_recommendation: string;
   suggested_code: string;
+  target_file?: string;
   prevention_tip: string;
 }
 

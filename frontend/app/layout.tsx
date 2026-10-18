@@ -8,22 +8,7 @@ export const metadata: Metadata = {
     "AI-powered browser test automation with self-healing locators, powered by local LLM inference",
 };
 
-function NavLink({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
-    >
-      {children}
-    </Link>
-  );
-}
+import { NavLinks } from "./nav-links";
 
 export default function RootLayout({
   children,
@@ -64,11 +49,7 @@ export default function RootLayout({
               </span>
             </Link>
 
-            <div className="flex items-center gap-1">
-              <NavLink href="/">Connect Repo</NavLink>
-              <NavLink href="/runs">Test Runs</NavLink>
-              <NavLink href="/evaluation">Evaluation</NavLink>
-            </div>
+            <NavLinks />
           </div>
         </nav>
 

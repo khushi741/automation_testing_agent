@@ -299,8 +299,16 @@ export default function RunDetailPage() {
                       ) : diag ? (
                         <div className="space-y-4 text-sm">
                           {/* Title */}
-                          <div className="text-sm font-semibold text-purple-100 flex items-center gap-2">
-                            <span>📌</span> {diag.title}
+                          <div className="flex items-center justify-between flex-wrap gap-2">
+                            <div className="text-sm font-semibold text-purple-100 flex items-center gap-2">
+                              <span>📌</span> {diag.title}
+                            </div>
+                            {diag.target_file && (
+                              <div className="flex items-center gap-1.5 text-xs font-mono text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-lg">
+                                <span>📁</span>
+                                <span>{diag.target_file}</span>
+                              </div>
+                            )}
                           </div>
 
                           {/* Root Cause (What went wrong) */}
@@ -315,8 +323,15 @@ export default function RunDetailPage() {
 
                           {/* How Can It Be Fixed */}
                           <div className="space-y-1.5">
-                            <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-                              <span>🛠️</span> How Can It Be Fixed (Actionable Solution)
+                            <div className="flex items-center justify-between flex-wrap gap-2">
+                              <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
+                                <span>🛠️</span> How Can It Be Fixed (Actionable Solution)
+                              </div>
+                              {diag.target_file && !diag.suggested_code && (
+                                <span className="text-xs font-mono text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded flex items-center gap-1">
+                                  📁 {diag.target_file}
+                                </span>
+                              )}
                             </div>
                             <div className="text-gray-300 whitespace-pre-line leading-relaxed bg-black/40 p-3.5 rounded-xl border border-white/5 font-sans">
                               {diag.fix_recommendation}
@@ -325,8 +340,8 @@ export default function RunDetailPage() {
 
                           {/* Suggested Code */}
                           {diag.suggested_code && (
-                            <div className="space-y-1.5">
-                              <div className="flex items-center justify-between">
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between flex-wrap gap-2">
                                 <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-400 uppercase tracking-wider">
                                   <span>💻</span> Recommended Code / Fix Snippet
                                 </div>
@@ -341,6 +356,22 @@ export default function RunDetailPage() {
                                   {copiedId === tc.id ? "✓ Copied!" : "📋 Copy Snippet"}
                                 </button>
                               </div>
+
+                              {/* Target File to Paste / Apply in */}
+                              {diag.target_file && (
+                                <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-purple-500/10 border border-purple-500/25 text-xs">
+                                  <span className="text-purple-300 font-semibold flex items-center gap-1.5 whitespace-nowrap">
+                                    <span>📁</span> Target File:
+                                  </span>
+                                  <span className="text-gray-400 text-xs hidden sm:inline whitespace-nowrap">
+                                    Paste or modify code in:
+                                  </span>
+                                  <code className="font-mono text-purple-200 bg-purple-950/70 px-2.5 py-1 rounded-lg border border-purple-500/30 font-semibold select-all break-all">
+                                    {diag.target_file}
+                                  </code>
+                                </div>
+                              )}
+
                               <pre className="p-3.5 rounded-xl bg-black/60 border border-white/10 text-xs font-mono text-purple-200 overflow-x-auto leading-relaxed">
                                 {diag.suggested_code}
                               </pre>
