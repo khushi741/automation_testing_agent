@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -10,6 +10,17 @@ async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
     throw new Error(err.detail || `API error ${res.status}`);
   }
   return res.json();
+}
+
+export interface CaseDiagnostic {
+  status: string;
+  title: string;
+  category: string;
+  root_cause: string;
+  severity: string;
+  fix_recommendation: string;
+  suggested_code: string;
+  prevention_tip: string;
 }
 
 // ─── Repos ───────────────────────────────────────────────────────────────────
@@ -85,6 +96,7 @@ export interface ExecutionStep {
   duration?: number;
   screenshot?: string;
   step_num?: number;
+  error?: string;
 }
 
 export interface TestCaseResult {
@@ -191,4 +203,8 @@ export function screenshotUrl(filename: string): string {
 
 export async function healthCheck(): Promise<{ status: string }> {
   return fetchApi("/api/health");
+}
+
+export async function getTestCaseDiagnosis(caseId: string): Promise<CaseDiagnostic> {
+  return fetchApi<CaseDiagnostic>(`/api/test-cases/${caseId}/diagnose`);
 }

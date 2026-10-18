@@ -540,9 +540,17 @@ def _bg_generate_tests(repo_id: str):
 async def create_test_run(body: TestRunCreate, db: Session = Depends(get_db)):
     ensure_worker()
 
+    target_val = body.target
+    if not target_val and body.repo_id:
+        repo = db.query(Repo).filter(Repo.id == body.repo_id).first()
+        if repo and repo.github_url:
+            target_val = repo.github_url.replace("https://github.com/", "").rstrip("/")
+    if not target_val:
+        target_val = "demo"
+
     run = TestRun(
         repo_id=body.repo_id,
-        target=body.target or "demo",
+        target=target_val,
         self_healing_enabled=body.self_healing_enabled,
         status="queued"
     )
@@ -602,6 +610,44 @@ async def get_test_run(run_id: str, db: Session = Depends(get_db)):
     if not run:
         raise HTTPException(status_code=404, detail="Test run not found")
     return run
+
+
+@app.get("/api/test-cases/{case_id}/diagnose")
+async def get_test_case_diagnostics(case_id: str, db: Session = Depends(get_db)):
+    tc = db.query(TestCase).filter(TestCase.id == case_id).first()
+    if not tc:
+        raise HTTPException(status_code=404, detail="Test case not found")
+
+    from src.diagnostics import diagnose_test_case
+
+    repo_context = {}
+    if tc.test_run and tc.test_run.repo:
+        repo = tc.test_run.repo
+        repo_context = {
+            "github_url": repo.github_url,
+            "framework": repo.framework_detected,
+            "routes": repo.routes_json or []
+        }
+
+    tc_dict = {
+        "id": tc.id,
+        "description": tc.description,
+        "source_route": tc.source_route,
+        "status": tc.status,
+        "steps_json": tc.steps_json or [],
+        "error": tc.error,
+        "duration": tc.duration,
+        "healing_events": [
+            {
+                "original_selector": h.original_selector,
+                "healed_selector": h.healed_selector,
+                "confidence_score": h.confidence_score,
+            }
+            for h in tc.healing_events
+        ]
+    }
+
+    return diagnose_test_case(tc_dict, repo_context)
 
 
 # ─── Evaluation API ──────────────────────────────────────────────────────────
@@ -665,4 +711,5 @@ async def health():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
