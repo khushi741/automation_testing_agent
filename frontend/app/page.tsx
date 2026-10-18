@@ -217,10 +217,13 @@ export default function HomePage() {
           </div>
 
           {/* Heading */}
-          <h1 className="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-[1.0] text-[#0a291e] max-w-4xl mx-auto">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-[1.08] text-[#0a291e] max-w-4xl mx-auto">
             Autonomous tests.<br />
-            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-500 bg-clip-text text-transparent italic">
-              Zero broken locators.
+            <span className="inline-block bg-gradient-to-r from-emerald-600 via-teal-600 to-green-500 bg-clip-text text-transparent italic pr-4 pb-1">
+              Zero broken
+            </span>{" "}
+            <span className="inline-block bg-gradient-to-r from-teal-600 to-green-500 bg-clip-text text-transparent italic pr-4 pb-1">
+              locators.
             </span>
           </h1>
 
