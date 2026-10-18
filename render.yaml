@@ -28,7 +28,4 @@ services:
     startCommand: cd frontend && npm run start
     envVars:
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: automation-testing-agent-backend
-          property: host
+        value: https://automation-testing-agent-backend.onrender.com

@@ -1,13 +1,19 @@
 export function getApiBase(): string {
-  let url = process.env.NEXT_PUBLIC_API_URL;
-  if (!url || url.includes("localhost")) {
-    if (typeof window !== "undefined" && window.location.hostname.includes("onrender.com")) {
-      return "https://automation-testing-agent-backend.onrender.com";
-    }
+  // If running in browser on Render, always use the public backend URL
+  if (typeof window !== "undefined" && window.location.hostname.includes("onrender.com")) {
+    return "https://automation-testing-agent-backend.onrender.com";
   }
+
+  let url = process.env.NEXT_PUBLIC_API_URL;
   if (!url) {
     url = "http://localhost:8080";
   }
+
+  // Handle Render internal host without TLD
+  if (!url.includes(".") && !url.includes("localhost")) {
+    url = `${url}.onrender.com`;
+  }
+
   if (!url.startsWith("http://") && !url.startsWith("https://")) {
     url = `https://${url}`;
   }
