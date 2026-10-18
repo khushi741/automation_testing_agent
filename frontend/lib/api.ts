@@ -77,12 +77,22 @@ export interface Screenshot {
   step_number: number | null;
 }
 
+export interface ExecutionStep {
+  status?: string;
+  description?: string;
+  action?: string;
+  target?: string;
+  duration?: number;
+  screenshot?: string;
+  step_num?: number;
+}
+
 export interface TestCaseResult {
   id: string;
   description: string;
   source_route: string | null;
   status: string;
-  steps_json: Record<string, unknown>[] | null;
+  steps_json: ExecutionStep[] | null;
   error: string | null;
   duration: number;
   healing_events: HealingEvent[];

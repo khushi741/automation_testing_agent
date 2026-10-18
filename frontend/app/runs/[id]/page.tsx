@@ -2,23 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { getTestRun, TestRun, screenshotUrl } from "@/lib/api";
+import { getTestRun, TestRun, ExecutionStep, screenshotUrl } from "@/lib/api";
 
 export default function RunDetailPage() {
   const params = useParams();
   const runId = params.id as string;
   const [run, setRun] = useState<TestRun | null>(null);
   const [loading, setLoading] = useState(true);
-
-  interface ExecutionStep {
-    status: string;
-    description?: string;
-    action?: string;
-    target?: string;
-    duration?: number;
-    screenshot?: string;
-    step_num?: number;
-  }
 
   async function loadRun() {
     try {

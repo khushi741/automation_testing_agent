@@ -1,28 +1,43 @@
 import os
 import logging
-from typing import List, Dict, Any, Tuple
+import re
+from typing import List, Dict, Any, Tuple, Optional
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger(__name__)
 
+HAVE_TRANSFORMERS = False
+try:
+    from sentence_transformers import SentenceTransformer
+    HAVE_TRANSFORMERS = True
+except Exception as err:
+    logger.warning(f"SentenceTransformer import failed ({err}). Self-healing will use heuristic token matcher fallback.")
+
 class SelfHealingLocator:
     _model_instance = None
+    _model_failed = False
 
     @classmethod
-    def get_model(cls) -> SentenceTransformer:
+    def get_model(cls):
         """
         Lazy load and cache the SentenceTransformer model (singleton)
         to prevent reloading on every self-healing invocation.
         """
+        if not HAVE_TRANSFORMERS or cls._model_failed:
+            return None
+
         if cls._model_instance is None:
-            # Force cache directory to D: drive
-            os.environ["HF_HOME"] = r"D:\hf_cache"
-            os.environ["SENTENCE_TRANSFORMERS_HOME"] = r"D:\hf_cache"
-            
-            logger.info("Initializing SentenceTransformer (all-MiniLM-L6-v2) on D: drive...")
-            cls._model_instance = SentenceTransformer("all-MiniLM-L6-v2")
-            logger.info("SentenceTransformer model successfully loaded.")
+            try:
+                os.environ["HF_HOME"] = r"D:\hf_cache"
+                os.environ["SENTENCE_TRANSFORMERS_HOME"] = r"D:\hf_cache"
+                
+                logger.info("Initializing SentenceTransformer (all-MiniLM-L6-v2) on D: drive...")
+                cls._model_instance = SentenceTransformer("all-MiniLM-L6-v2")
+                logger.info("SentenceTransformer model successfully loaded.")
+            except Exception as e:
+                logger.error(f"Failed to load SentenceTransformer: {e}. Falling back to heuristic locator.")
+                cls._model_failed = True
+                return None
         return cls._model_instance
 
     @staticmethod
@@ -131,14 +146,31 @@ class SelfHealingLocator:
 
         # Build descriptions for all elements
         candidate_reprs = [cls.build_representation(c) for c in candidates]
-        
-        # Calculate embeddings
-        target_embedding = model.encode(target_description, convert_to_tensor=True)
-        candidate_embeddings = model.encode(candidate_reprs, convert_to_tensor=True)
 
-        # Compute cosine similarities
-        from sentence_transformers.util import cos_sim
-        similarities = cos_sim(target_embedding, candidate_embeddings).cpu().numpy()[0]
+        if model is not None:
+            # Calculate embeddings using SentenceTransformer
+            target_embedding = model.encode(target_description, convert_to_tensor=True)
+            candidate_embeddings = model.encode(candidate_reprs, convert_to_tensor=True)
+
+            # Compute cosine similarities
+            from sentence_transformers.util import cos_sim
+            similarities = cos_sim(target_embedding, candidate_embeddings).cpu().numpy()[0]
+        else:
+            # Fallback heuristic matcher (Token + Jaccard similarity)
+            from difflib import SequenceMatcher
+            target_tokens = set(re.findall(r"\w+", target_description.lower()))
+            similarities = []
+            for cand_repr in candidate_reprs:
+                cand_lower = cand_repr.lower()
+                seq_ratio = SequenceMatcher(None, target_description.lower(), cand_lower).ratio()
+                cand_tokens = set(re.findall(r"\w+", cand_lower))
+                intersection = target_tokens.intersection(cand_tokens)
+                union = target_tokens.union(cand_tokens)
+                jaccard = len(intersection) / len(union) if union else 0.0
+                overlap_bonus = sum(0.2 for t in target_tokens if len(t) > 2 and t in cand_lower)
+                score = min(1.0, (seq_ratio * 0.3) + (jaccard * 0.5) + min(0.2, overlap_bonus))
+                similarities.append(score)
+            similarities = np.array(similarities)
 
         best_idx = np.argmax(similarities)
         best_score = float(similarities[best_idx])

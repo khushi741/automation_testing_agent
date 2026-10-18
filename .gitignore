@@ -24,6 +24,10 @@ venv/
 ENV/
 env/
 *.sqlite3
+*.db
+backend/scratch/
+backend/static/screenshots/
+backend/static/reports/
 
 # Logs
 *.log

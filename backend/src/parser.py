@@ -56,12 +56,10 @@ def heuristic_fallback_parser(text: str) -> List[TestStep]:
     logger.warning("Using heuristic rule-based fallback parser (Ollama is offline).")
     steps = []
     
-    # Split text into logical segments by commas, semicolons, or "and"
-    clauses = re.split(r',|;|\band\b', text)
+    # Split text into logical segments by commas, semicolons, or "and", respecting quotes
+    pattern = r'''(?:,\s*|;\s*|\s+\band\b\s+)(?=(?:[^'"]*['"][^'"]*['"])*[^'"]*$)'''
+    clauses = [c.strip() for c in re.split(pattern, text) if c.strip()]
     for clause in clauses:
-        clause = clause.strip()
-        if not clause:
-            continue
             
         clause_lower = clause.lower()
         
@@ -195,11 +193,28 @@ def heuristic_fallback_parser(text: str) -> List[TestStep]:
                 
     return steps
 
+_OLLAMA_AVAILABLE = None
+
+def is_ollama_available() -> bool:
+    global _OLLAMA_AVAILABLE
+    if _OLLAMA_AVAILABLE is False:
+        return False
+    try:
+        r = requests.get(f"{OLLAMA_URL}/api/tags", timeout=0.8)
+        _OLLAMA_AVAILABLE = (r.status_code == 200)
+        return _OLLAMA_AVAILABLE
+    except Exception:
+        _OLLAMA_AVAILABLE = False
+        return False
+
 def parse_test_case_with_llm(test_case_text: str) -> List[TestStep]:
     """
     Sends the natural language test case to local Ollama and parses the JSON output.
     Falls back to heuristic parsing if Ollama is offline.
     """
+    if not is_ollama_available():
+        return heuristic_fallback_parser(test_case_text)
+
     url = f"{OLLAMA_URL}/api/chat"
     payload = {
         "model": OLLAMA_MODEL,
@@ -215,7 +230,7 @@ def parse_test_case_with_llm(test_case_text: str) -> List[TestStep]:
     }
     
     try:
-        response = requests.post(url, json=payload, timeout=5)
+        response = requests.post(url, json=payload, timeout=2)
         response.raise_for_status()
         result_json = response.json()
         content = result_json.get("message", {}).get("content", "")

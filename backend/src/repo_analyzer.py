@@ -16,6 +16,23 @@ from src.config import SCRATCH_DIR
 logger = logging.getLogger(__name__)
 
 
+def get_git_executable() -> str:
+    """Finds the git executable in PATH or standard system install locations."""
+    git_cmd = shutil.which("git")
+    if git_cmd:
+        return git_cmd
+    candidates = [
+        r"C:\Program Files\Git\cmd\git.exe",
+        r"C:\Program Files\Git\bin\git.exe",
+        os.path.expanduser(r"~\AppData\Local\Programs\Git\cmd\git.exe"),
+        os.path.expanduser(r"~\AppData\Local\Programs\Git\bin\git.exe"),
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return "git"
+
+
 def clone_repo(github_url: str, repo_id: str) -> str:
     """
     Clones a GitHub repository into the scratch directory.
@@ -25,9 +42,10 @@ def clone_repo(github_url: str, repo_id: str) -> str:
     if dest.exists():
         shutil.rmtree(dest)
 
-    logger.info(f"Cloning {github_url} into {dest}...")
+    git_exe = get_git_executable()
+    logger.info(f"Cloning {github_url} into {dest} using {git_exe}...")
     result = subprocess.run(
-        ["git", "clone", "--depth", "1", github_url, str(dest)],
+        [git_exe, "clone", "--depth", "1", github_url, str(dest)],
         capture_output=True, text=True, timeout=120
     )
 

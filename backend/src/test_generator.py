@@ -24,15 +24,22 @@ def generate_tests_for_routes(
     Tries the local LLM first, falls back to heuristic generation.
     """
     all_cases = []
+    use_llm = False
+    try:
+        from src.parser import is_ollama_available
+        use_llm = is_ollama_available()
+    except Exception:
+        pass
 
     for route in routes:
-        try:
-            cases = _generate_with_llm(route, framework, base_url)
-            if cases:
-                all_cases.extend(cases)
-                continue
-        except Exception as e:
-            logger.warning(f"LLM test generation failed for {route['path']}: {e}")
+        if use_llm:
+            try:
+                cases = _generate_with_llm(route, framework, base_url)
+                if cases:
+                    all_cases.extend(cases)
+                    continue
+            except Exception as e:
+                logger.warning(f"LLM test generation failed for {route['path']}: {e}")
 
         # Fallback: heuristic generation
         cases = _generate_heuristic(route, framework, base_url)

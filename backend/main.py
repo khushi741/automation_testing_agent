@@ -112,10 +112,18 @@ def browser_worker():
 
     with sync_playwright() as p:
         logger.info("Launching Playwright Chromium browser...")
-        browser = p.chromium.launch(
-            headless=PLAYWRIGHT_HEADLESS,
-            slow_mo=PLAYWRIGHT_SLOW_MO
-        )
+        try:
+            browser = p.chromium.launch(
+                headless=PLAYWRIGHT_HEADLESS,
+                slow_mo=PLAYWRIGHT_SLOW_MO
+            )
+        except Exception as launch_err:
+            logger.warning(f"Default Chromium launch failed ({launch_err}). Launching system Chrome...")
+            browser = p.chromium.launch(
+                channel="chrome",
+                headless=PLAYWRIGHT_HEADLESS,
+                slow_mo=PLAYWRIGHT_SLOW_MO
+            )
         logger.info("Browser ready.")
 
         while True:
@@ -164,8 +172,12 @@ def _process_test_run_job(job: dict, browser):
         for tc in cases:
             scenario = tc.description
             scenario = scenario.replace("localhost:5000", "localhost:8000")
-            if job.get("broken"):
+            if job.get("broken") and "?broken=true" not in scenario:
                 scenario = scenario.replace("/demo/login", "/demo/login?broken=true")
+
+            # If scenario lacks navigation and run has a target URL, navigate first
+            if "http://" not in scenario and "https://" not in scenario and run.target and (run.target.startswith("http://") or run.target.startswith("https://")):
+                scenario = f"Navigate to {run.target}, {scenario}"
 
             try:
                 result = run_test_case(

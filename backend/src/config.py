@@ -23,7 +23,7 @@ DATABASE_URL = os.getenv(
 )
 
 # AI/LLM configurations
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434")
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:1.5b")
 
 # Embedding configurations
