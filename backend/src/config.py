@@ -31,6 +31,6 @@ EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 HEALING_THRESHOLD = 0.20  # Similarity score threshold to accept a self-healed locator
 
 # Playwright configuration
-PLAYWRIGHT_TIMEOUT = 3000  # 3 seconds timeout for fast self-healing trigger
+PLAYWRIGHT_TIMEOUT = int(os.getenv("PLAYWRIGHT_TIMEOUT", "1500"))  # 1.5s snappy timeout for fast self-healing
 PLAYWRIGHT_HEADLESS = True
-PLAYWRIGHT_SLOW_MO = 200   # Small delay for demo execution visual clarity
+PLAYWRIGHT_SLOW_MO = int(os.getenv("PLAYWRIGHT_SLOW_MO", "0"))    # 0ms delay for maximum cloud execution speed

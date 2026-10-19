@@ -54,6 +54,7 @@ class SelfHealingLocator:
             );
             
             elements.forEach((el, index) => {
+                if (candidates.length >= 50) return;
                 const rect = el.getBoundingClientRect();
                 const style = window.getComputedStyle(el);
                 

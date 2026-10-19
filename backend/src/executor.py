@@ -33,9 +33,13 @@ def resolve_locator(page, target: str, action: str):
             clean_name = target.replace("link", "").replace("anchor", "").strip()
             return page.get_by_role("link", name=clean_name or target, exact=False)
 
-    # 4. Welcome or greeting target
-    if "greeting" in target_lower or "welcome" in target_lower:
-        return page.locator('#welcome-message, #user-greeting, h1, h2, [id*="greeting"], [id*="welcome"]')
+    # 4. Welcome, greeting, heading or title target
+    if any(keyword in target_lower for keyword in ["greeting", "welcome", "heading", "title", "header"]):
+        return page.locator('h1, h2, h3, [role="heading"], #welcome-message, #user-greeting, [id*="greeting"], [id*="welcome"], [class*="heading"], [class*="title"], header, main')
+
+    # 4.5 Full page or body target
+    if target_lower in ["page", "body", "screen", "document", "window", "html"]:
+        return page.locator('body')
 
     # 5. Clean fallback locator
     clean_target = target.replace('"', '\\"')
@@ -55,13 +59,9 @@ def execute_step(page, step: TestStep, timeout: int = PLAYWRIGHT_TIMEOUT) -> boo
     if action == "navigate":
         # Fast timeout for localhost/127.0.0.1 to avoid 25s hangs when deployed in the cloud
         is_local = "localhost" in str(target) or "127.0.0.1" in str(target)
-        nav_timeout = 6000 if is_local else (25000 if ("http://" in str(target) or "https://" in str(target)) else max(timeout, 15000))
+        nav_timeout = 5000 if is_local else (20000 if ("http://" in str(target) or "https://" in str(target)) else max(timeout, 10000))
         try:
             page.goto(target, timeout=nav_timeout, wait_until="domcontentloaded")
-            try:
-                page.wait_for_load_state("load", timeout=3000)
-            except Exception:
-                pass
             return True
         except Exception as nav_err:
             if is_local:
@@ -84,7 +84,7 @@ def execute_step(page, step: TestStep, timeout: int = PLAYWRIGHT_TIMEOUT) -> boo
         def normalize_str(s: str) -> str:
             return re.sub(r'[^\w\s]', '', s.lower()).strip()
 
-        if target.lower() == "page":
+        if target.lower() in ["page", "body", "screen", "document", "window", "html"]:
             body_text = page.locator("body").inner_text(timeout=timeout)
             if value and (value not in body_text and normalize_str(value) not in normalize_str(body_text)):
                 raise AssertionError(f"Expected page text '{value}' not found in DOM.")
@@ -96,6 +96,13 @@ def execute_step(page, step: TestStep, timeout: int = PLAYWRIGHT_TIMEOUT) -> boo
         return True
 
     elif action == "assert_visible":
+        if target.lower() in ["page", "body", "screen", "document", "window", "html"]:
+            body_loc = page.locator("body")
+            body_loc.wait_for(state="visible", timeout=timeout)
+            if not body_loc.is_visible():
+                raise AssertionError("Page body is not visible.")
+            return True
+
         try:
             locator = resolve_locator(page, target, action)
             locator.wait_for(state="visible", timeout=timeout)
