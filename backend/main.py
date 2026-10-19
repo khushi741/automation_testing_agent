@@ -112,17 +112,27 @@ def browser_worker():
 
     with sync_playwright() as p:
         logger.info("Launching Playwright Chromium browser...")
+        chromium_args = [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--no-zygote",
+            "--single-process",
+        ]
         try:
             browser = p.chromium.launch(
                 headless=PLAYWRIGHT_HEADLESS,
-                slow_mo=PLAYWRIGHT_SLOW_MO
+                slow_mo=PLAYWRIGHT_SLOW_MO,
+                args=chromium_args
             )
         except Exception as launch_err:
             logger.warning(f"Default Chromium launch failed ({launch_err}). Launching system Chrome...")
             browser = p.chromium.launch(
                 channel="chrome",
                 headless=PLAYWRIGHT_HEADLESS,
-                slow_mo=PLAYWRIGHT_SLOW_MO
+                slow_mo=PLAYWRIGHT_SLOW_MO,
+                args=chromium_args
             )
         logger.info("Browser ready.")
 
@@ -204,6 +214,9 @@ def _process_test_run_job(job: dict, browser):
             if job.get("broken") and "?broken=true" not in scenario:
                 scenario = scenario.replace("/demo/login", "/demo/login?broken=true")
 
+            tc.status = "running"
+            db.commit()
+
             try:
                 result = run_test_case(
                     scenario,
@@ -251,6 +264,9 @@ def _process_test_run_job(job: dict, browser):
                 fail_count += 1
                 logger.error(f"Test case execution error: {e}")
 
+            run.pass_count = pass_count
+            run.fail_count = fail_count
+            run.heal_count = heal_count
             db.commit()
 
         run.status = "completed"
@@ -639,7 +655,7 @@ async def create_test_run(body: TestRunCreate, db: Session = Depends(get_db)):
 
 
 @app.get("/api/test-runs", response_model=List[TestRunSummary])
-async def list_test_runs(
+def list_test_runs(
     repo_id: Optional[str] = None,
     status: Optional[str] = None,
     db: Session = Depends(get_db)
@@ -653,7 +669,7 @@ async def list_test_runs(
 
 
 @app.get("/api/test-runs/{run_id}", response_model=TestRunOut)
-async def get_test_run(run_id: str, db: Session = Depends(get_db)):
+def get_test_run(run_id: str, db: Session = Depends(get_db)):
     run = db.query(TestRun).filter(TestRun.id == run_id).first()
     if not run:
         raise HTTPException(status_code=404, detail="Test run not found")
@@ -661,7 +677,7 @@ async def get_test_run(run_id: str, db: Session = Depends(get_db)):
 
 
 @app.get("/api/test-cases/{case_id}/diagnose")
-async def get_test_case_diagnostics(case_id: str, db: Session = Depends(get_db)):
+def get_test_case_diagnostics(case_id: str, db: Session = Depends(get_db)):
     tc = db.query(TestCase).filter(TestCase.id == case_id).first()
     if not tc:
         raise HTTPException(status_code=404, detail="Test case not found")

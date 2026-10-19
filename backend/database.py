@@ -23,7 +23,18 @@ except Exception as e:
     sqlite_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_agent.db")
     sqlite_url = f"sqlite:///{sqlite_path}"
     print(f"PostgreSQL connection failed. Falling back to local SQLite database: {sqlite_path}")
-    engine = create_engine(sqlite_url, connect_args={"check_same_thread": False})
+    engine = create_engine(
+        sqlite_url,
+        connect_args={"check_same_thread": False, "timeout": 30}
+    )
+    from sqlalchemy import event
+    @event.listens_for(engine, "connect")
+    def set_sqlite_pragma(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA synchronous=NORMAL")
+        cursor.execute("PRAGMA busy_timeout=30000")
+        cursor.close()
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
