@@ -60,7 +60,7 @@ export default function RunsPage() {
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-xs font-bold text-emerald-900 border border-emerald-300 mb-2">
             <span>📊 Test Execution History</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0a291e]">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-[#0a291e]">
             <span className="bg-gradient-to-r from-emerald-800 via-teal-700 to-green-700 bg-clip-text text-transparent">
               Test Runs & Diagnostics
             </span>
@@ -101,7 +101,7 @@ export default function RunsPage() {
 
       {/* Filter Tabs */}
       <div className="flex items-center justify-between flex-wrap gap-2 pt-2">
-        <div className="flex gap-1.5 flex-wrap">
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar py-1 max-w-full">
           {["", "completed", "running", "failed", "queued"].map((f) => (
             <button
               key={f}

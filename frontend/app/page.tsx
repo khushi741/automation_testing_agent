@@ -237,7 +237,7 @@ export default function HomePage() {
           </div>
 
           {/* Heading */}
-          <h1 className="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight leading-[1.08] text-[#0a291e] max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-extrabold tracking-tight leading-[1.12] break-words text-[#0a291e] max-w-4xl mx-auto">
             Autonomous tests.<br />
             <span className="inline-block bg-gradient-to-r from-emerald-600 via-teal-600 to-green-500 bg-clip-text text-transparent italic pr-4 pb-1">
               Zero broken
@@ -256,20 +256,20 @@ export default function HomePage() {
           <div className="flex gap-4 justify-center flex-wrap pt-2">
             <button
               onClick={scrollToConnect}
-              className="px-8 py-3.5 btn-emerald-glow font-bold rounded-xl text-base flex items-center gap-2 cursor-pointer shadow-md"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3.5 btn-emerald-glow font-bold rounded-xl text-base flex items-center justify-center gap-2 cursor-pointer shadow-md"
             >
               ⬡ Connect GitHub repo →
             </button>
             <a
               href="/evaluation"
-              className="px-8 py-3.5 btn-frosted-green font-bold rounded-xl text-base flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3.5 btn-frosted-green font-bold rounded-xl text-base flex items-center justify-center gap-2"
             >
               ▶ View Evaluation Suite
             </a>
           </div>
 
           {/* Quick Demo Repo Pills (1-Click Try It!) */}
-          <div className="flex items-center justify-center gap-2 flex-wrap pt-3 text-xs">
+          <div className="flex items-center justify-center gap-2 flex-wrap sm:flex-nowrap sm:overflow-x-auto no-scrollbar pt-3 text-xs px-2">
             <span className="text-emerald-800 font-semibold flex items-center gap-1">
               <span>⚡</span> Quick Test:
             </span>
@@ -319,7 +319,7 @@ export default function HomePage() {
                 <span className="w-3 h-3 rounded-full bg-emerald-500/90 inline-block shadow-2xs" />
                 
                 {/* Frosted Tabs */}
-                <div className="ml-4 flex items-center gap-1">
+                <div className="ml-2 sm:ml-4 flex items-center gap-1 overflow-x-auto no-scrollbar max-w-[220px] sm:max-w-none py-0.5">
                   <button
                     onClick={() => setActiveTab("terminal")}
                     className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-all ${
@@ -361,7 +361,7 @@ export default function HomePage() {
             </div>
 
             {/* Tab Contents */}
-            <div className="p-6 bg-white min-h-[260px] font-mono text-sm leading-relaxed overflow-y-auto max-h-[340px]">
+            <div className="p-3.5 sm:p-6 bg-white min-h-[260px] font-mono text-xs sm:text-sm leading-relaxed overflow-y-auto max-h-[340px]">
               {activeTab === "terminal" && (
                 <div className="space-y-1">
                   {consoleLogs.map((log, index) => {
@@ -616,7 +616,7 @@ export default function HomePage() {
             </div>
 
             {/* Stepper */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
               {[
                 {
                   label: "1. Clone Repo",

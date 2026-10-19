@@ -211,7 +211,7 @@ export default function RunDetailPage() {
 
       {/* ─── Active Execution Live Banner ─── */}
       {isRunning && (
-        <div className="glass-card p-6 border-emerald-300 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/5 relative overflow-hidden shadow-lg shadow-emerald-500/5 space-y-4">
+        <div className="glass-card p-4 sm:p-6 border-emerald-300 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/5 relative overflow-hidden shadow-lg shadow-emerald-500/5 space-y-4">
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-green-500 animate-pulse" />
 
           <div className="flex items-center justify-between flex-wrap gap-4">
@@ -405,7 +405,7 @@ export default function RunDetailPage() {
                 {/* Clickable Header */}
                 <div
                   onClick={() => toggleCase(tc.id)}
-                  className="p-5 cursor-pointer select-none space-y-3"
+                  className="p-3.5 sm:p-5 cursor-pointer select-none space-y-3"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3 flex-1">
@@ -581,7 +581,7 @@ export default function RunDetailPage() {
                                 </div>
                               )}
 
-                              <pre className="p-4 rounded-xl bg-[#0c1813] border border-emerald-500/20 text-xs font-mono text-emerald-300 overflow-x-auto leading-relaxed shadow-inner">
+                              <pre className="p-3 sm:p-4 rounded-xl bg-[#0c1813] border border-emerald-500/20 text-[11px] sm:text-xs font-mono text-emerald-300 overflow-x-auto max-w-full leading-relaxed shadow-inner">
                                 {diag.suggested_code}
                               </pre>
                             </div>

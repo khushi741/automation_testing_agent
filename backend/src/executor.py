@@ -35,7 +35,7 @@ def resolve_locator(page, target: str, action: str):
 
     # 4. Welcome, greeting, heading or title target
     if any(keyword in target_lower for keyword in ["greeting", "welcome", "heading", "title", "header"]):
-        return page.locator('h1, h2, h3, [role="heading"], #welcome-message, #user-greeting, [id*="greeting"], [id*="welcome"], [class*="heading"], [class*="title"], header, main')
+        return page.locator('h1, h2, h3, [role="heading"], #welcome-message, #user-greeting, [id*="greeting"], [id*="welcome"], [class*="heading"], [class*="title"], header, main').first
 
     # 4.5 Full page or body target
     if target_lower in ["page", "body", "screen", "document", "window", "html"]:

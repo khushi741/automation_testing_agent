@@ -448,6 +448,40 @@ def ensure_worker():
 
 # ─── Demo Target Site Routes ─────────────────────────────────────────────────
 
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    """Root landing page serving heading and welcome greeting for automated tests."""
+    return HTMLResponse("""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Self-Healing Test Agent - Backend</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #071711; color: #f0fdf4; margin: 0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center; }
+        .card { background: #0f2e22; border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 40px 24px; max-width: 600px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        h1 { font-size: 26px; margin-bottom: 12px; color: #34d399; }
+        #welcome-message, .welcome-greeting { font-size: 16px; color: #a7f3d0; margin-bottom: 24px; font-weight: 500; }
+        p { color: #6ee7b7; font-size: 14px; line-height: 1.6; }
+        .btn-group { margin-top: 24px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .btn { display: inline-flex; align-items: center; background: linear-gradient(135deg, #059669, #10b981); color: #fff; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 13px; }
+        .btn-outline { background: rgba(255,255,255,0.06); border: 1px solid rgba(16, 185, 129, 0.4); color: #d1fae5; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 id="welcome-heading">Welcome to AI Self-Healing Test Agent</h1>
+        <div id="welcome-message" class="welcome-greeting">Welcome greeting: Playwright automation engine and backend API are active and healthy.</div>
+        <p>Autonomous test execution with semantic self-healing locators powered by embeddings and Playwright.</p>
+        <div class="btn-group">
+            <a href="/demo/login" class="btn">Open Demo App</a>
+            <a href="/docs" class="btn btn-outline">API Docs</a>
+            <a href="/api/health" class="btn btn-outline">Health Check</a>
+        </div>
+    </div>
+</body>
+</html>""")
+
 @app.get("/demo/login", response_class=HTMLResponse)
 async def demo_login(request: Request, broken: str = "false"):
     template = jinja_env.get_template("demo_login.html")

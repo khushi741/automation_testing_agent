@@ -91,7 +91,7 @@ export default function EvaluationPage() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-bold font-serif mb-1 text-[#0f2e22]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif mb-1 text-[#0f2e22]">
             <span className="bg-gradient-to-r from-emerald-700 via-teal-700 to-green-600 bg-clip-text text-transparent">
               Evaluation Suite
             </span>
@@ -103,7 +103,7 @@ export default function EvaluationPage() {
         <button
           onClick={handleRun}
           disabled={running}
-          className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-md shadow-emerald-600/20"
+          className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all disabled:opacity-50 shadow-md shadow-emerald-600/20 text-center"
         >
           {running ? "Running Evaluation..." : "▶ Run Evaluation"}
         </button>
@@ -134,7 +134,7 @@ export default function EvaluationPage() {
           {/* Comparison Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Without Self-Healing */}
-            <div className="glass-card p-6 space-y-4 bg-white border-rose-200/80 shadow-xs">
+            <div className="glass-card p-4 sm:p-6 space-y-4 bg-white border-rose-200/80 shadow-xs">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center">
                   <span className="text-rose-600 text-xl font-bold">✗</span>
@@ -171,7 +171,7 @@ export default function EvaluationPage() {
             </div>
 
             {/* With Self-Healing */}
-            <div className="glass-card p-6 space-y-4 bg-emerald-50/40 border-emerald-300 shadow-xs">
+            <div className="glass-card p-4 sm:p-6 space-y-4 bg-emerald-50/40 border-emerald-300 shadow-xs">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 rounded-xl bg-emerald-100 border border-emerald-300 flex items-center justify-center">
                   <span className="text-emerald-700 text-xl font-bold">✓</span>
