@@ -117,6 +117,10 @@ def browser_worker():
             "--disable-setuid-sandbox",
             "--disable-dev-shm-usage",
             "--disable-gpu",
+            "--disable-software-rasterizer",
+            "--disable-extensions",
+            "--disable-background-networking",
+            "--js-flags=--max-old-space-size=128",
             "--no-zygote",
             "--single-process",
         ]
