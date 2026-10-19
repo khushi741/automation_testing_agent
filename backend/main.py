@@ -121,8 +121,6 @@ def browser_worker():
             "--disable-extensions",
             "--disable-background-networking",
             "--js-flags=--max-old-space-size=128",
-            "--no-zygote",
-            "--single-process",
         ]
         try:
             browser = p.chromium.launch(
@@ -210,6 +208,13 @@ def _process_test_run_job(job: dict, browser):
                     target_url = "https://automation-testing-agent-backend.onrender.com/demo/login"
 
             if target_url:
+                from urllib.parse import urlparse
+                parsed_u = urlparse(target_url)
+                if parsed_u.netloc:
+                    clean_origin = f"{parsed_u.scheme}://{parsed_u.netloc}"
+                else:
+                    clean_origin = target_url
+
                 for bad_origin in [
                     "http://localhost:3000",
                     "http://localhost:8000",
@@ -220,9 +225,15 @@ def _process_test_run_job(job: dict, browser):
                     "https://localhost:3000",
                     "https://localhost:8000",
                 ]:
-                    scenario = scenario.replace(bad_origin, target_url)
+                    scenario = scenario.replace(bad_origin, clean_origin)
+                
+                # Sanitize any accidental nested subpaths (e.g. /demo/login/health -> /health)
+                import re
+                scenario = re.sub(r'/demo/login(?=/[a-zA-Z0-9_.-]+)', '', scenario)
+                scenario = scenario.replace("/demo/login/demo/login", "/demo/login")
+
                 if "http://" not in scenario and "https://" not in scenario:
-                    scenario = f"Navigate to {target_url}, {scenario}"
+                    scenario = f"Navigate to {clean_origin}, {scenario}"
             else:
                 scenario = scenario.replace("localhost:5000", "localhost:8000")
 
@@ -239,6 +250,15 @@ def _process_test_run_job(job: dict, browser):
                     self_healing_enabled=run.self_healing_enabled,
                     log_callback=None
                 )
+            except Exception as run_err:
+                logger.error(f"Test case execution error: {run_err}")
+                result = {
+                    "status": "FAILED",
+                    "duration": 0.0,
+                    "error": str(run_err),
+                    "steps": [],
+                    "healing_logs": []
+                }
 
                 tc.status = result.get("status", "FAILED").lower()
                 tc.steps_json = result.get("steps", [])

@@ -65,132 +65,138 @@ def run_test_case(
 
     # Step 2: Create browser page context
     context = browser.new_context(viewport={"width": 1280, "height": 720})
-    page = context.new_page()
-    
-    # Store page-specific logs to track steps details
-    execution_steps = []
-    healing_logs = []
-    
-    start_time = time.time()
-    overall_status = "PASSED"
+    context.set_default_timeout(PLAYWRIGHT_TIMEOUT)
+    context.set_default_navigation_timeout(8000)
+    try:
+        page = context.new_page()
+        
+        # Store page-specific logs to track steps details
+        execution_steps = []
+        healing_logs = []
+        
+        start_time = time.time()
+        overall_status = "PASSED"
 
-    for idx, raw_step in enumerate(parsed_steps):
-        step = raw_step.model_copy()  # Create a copy so modifications don't mutate original
-        step_num = idx + 1
-        log(f"[{step_num}/{len(parsed_steps)}] Step: {step.description}")
-        
-        step_run = {
-            "description": step.description,
-            "action": step.action,
-            "target": step.target,
-            "value": step.value,
-            "status": "PENDING",
-            "error": None,
-            "screenshot": None,
-            "duration": 0.0
-        }
-        
-        step_start = time.time()
-        
-        try:
-            # Attempt to execute the step normally
-            execute_step(page, step, timeout=PLAYWRIGHT_TIMEOUT)
-            step_run["status"] = "PASSED"
-            log(f"[{step_num}/{len(parsed_steps)}] Step passed.")
+        for idx, raw_step in enumerate(parsed_steps):
+            step = raw_step.model_copy()  # Create a copy so modifications don't mutate original
+            step_num = idx + 1
+            log(f"[{step_num}/{len(parsed_steps)}] Step: {step.description}")
             
-        except Exception as primary_error:
-            # Primary execution failed
-            error_repr = str(primary_error)
-            log(f"[{step_num}/{len(parsed_steps)}] Action failed: {error_repr}")
+            step_run = {
+                "description": step.description,
+                "action": step.action,
+                "target": step.target,
+                "value": step.value,
+                "status": "PENDING",
+                "error": None,
+                "screenshot": None,
+                "duration": 0.0
+            }
             
-            # Check if self-healing can be applied
-            is_healable = step.action not in ["navigate", "assert_url"]
-            if self_healing_enabled and is_healable:
-                log(f"[{step_num}/{len(parsed_steps)}] Initiating self-healing locator protocol...")
+            step_start = time.time()
+            
+            try:
+                # Attempt to execute the step normally
+                execute_step(page, step, timeout=PLAYWRIGHT_TIMEOUT)
+                step_run["status"] = "PASSED"
+                log(f"[{step_num}/{len(parsed_steps)}] Step passed.")
                 
-                try:
-                    healed_candidate, confidence = SelfHealingLocator.heal(
-                        page, step.target, threshold=HEALING_THRESHOLD
-                    )
+            except Exception as primary_error:
+                # Primary execution failed
+                error_repr = str(primary_error)
+                log(f"[{step_num}/{len(parsed_steps)}] Action failed: {error_repr}")
+                
+                # Check if self-healing can be applied
+                is_healable = step.action not in ["navigate", "assert_url"]
+                if self_healing_enabled and is_healable:
+                    log(f"[{step_num}/{len(parsed_steps)}] Initiating self-healing locator protocol...")
                     
-                    if healed_candidate:
-                        healed_repr = SelfHealingLocator.build_representation(healed_candidate)
-                        healed_sel = healed_candidate["selector"]
+                    try:
+                        healed_candidate, confidence = SelfHealingLocator.heal(
+                            page, step.target, threshold=HEALING_THRESHOLD
+                        )
                         
-                        log(f"[{step_num}/{len(parsed_steps)}] Self-healing MATCH FOUND!")
-                        log(f"  Healed to: '{healed_sel}' (Confidence: {confidence * 100:.1f}%)")
+                        if healed_candidate:
+                            healed_repr = SelfHealingLocator.build_representation(healed_candidate)
+                            healed_sel = healed_candidate["selector"]
+                            
+                            log(f"[{step_num}/{len(parsed_steps)}] Self-healing MATCH FOUND!")
+                            log(f"  Healed to: '{healed_sel}' (Confidence: {confidence * 100:.1f}%)")
+                            
+                            # Save healing details
+                            healing_log = {
+                                "step_index": step_num,
+                                "step_description": step.description,
+                                "action": step.action,
+                                "original_target": step.target,
+                                "healed_selector": healed_sel,
+                                "healed_representation": healed_repr,
+                                "confidence": confidence
+                            }
+                            healing_logs.append(healing_log)
+                            
+                            # Update the step's locator to the healed one
+                            step.target = healed_sel
+                            
+                            # Retry the execution with the healed locator
+                            log(f"[{step_num}/{len(parsed_steps)}] Retrying step execution with healed locator...")
+                            execute_step(page, step, timeout=PLAYWRIGHT_TIMEOUT)
+                            
+                            step_run["status"] = "HEALED"
+                            step_run["target"] = healed_sel  # Save healed selector in results
+                            log(f"[{step_num}/{len(parsed_steps)}] Step healed and passed successfully.")
+                        else:
+                            # Healing failed to find any matching element
+                            log(f"[{step_num}/{len(parsed_steps)}] Self-healing did not find any matches above threshold.")
+                            raise primary_error
+                            
+                    except Exception as healing_error:
+                        log(f"[{step_num}/{len(parsed_steps)}] Step execution failed permanently. Error: {healing_error}")
+                        step_run["status"] = "FAILED"
+                        step_run["error"] = str(healing_error)
+                        overall_status = "FAILED"
                         
-                        # Save healing details
-                        healing_log = {
-                            "step_index": step_num,
-                            "step_description": step.description,
-                            "action": step.action,
-                            "original_target": step.target,
-                            "healed_selector": healed_sel,
-                            "healed_representation": healed_repr,
-                            "confidence": confidence
-                        }
-                        healing_logs.append(healing_log)
-                        
-                        # Update the step's locator to the healed one
-                        step.target = healed_sel
-                        
-                        # Retry the execution with the healed locator
-                        log(f"[{step_num}/{len(parsed_steps)}] Retrying step execution with healed locator...")
-                        execute_step(page, step, timeout=PLAYWRIGHT_TIMEOUT)
-                        
-                        step_run["status"] = "HEALED"
-                        step_run["target"] = healed_sel  # Save healed selector in results
-                        log(f"[{step_num}/{len(parsed_steps)}] Step healed and passed successfully.")
-                    else:
-                        # Healing failed to find any matching element
-                        log(f"[{step_num}/{len(parsed_steps)}] Self-healing did not find any matches above threshold.")
-                        raise primary_error
-                        
-                except Exception as healing_error:
-                    log(f"[{step_num}/{len(parsed_steps)}] Step execution failed permanently. Error: {healing_error}")
+                        # Capture failure screenshot
+                        screenshot_filename = f"fail_{run_id}_step_{step_num}.png"
+                        screenshot_path = SCREENSHOTS_DIR / screenshot_filename
+                        try:
+                            page.screenshot(path=screenshot_path, timeout=1000)
+                            step_run["screenshot"] = screenshot_filename
+                            log(f"Captured failure screenshot saved to: {screenshot_path}")
+                        except Exception as screenshot_err:
+                            logger.error(f"Failed to capture screenshot: {screenshot_err}")
+                else:
+                    # No self-healing enabled or step is not healable
                     step_run["status"] = "FAILED"
-                    step_run["error"] = str(healing_error)
+                    step_run["error"] = error_repr
                     overall_status = "FAILED"
                     
                     # Capture failure screenshot
                     screenshot_filename = f"fail_{run_id}_step_{step_num}.png"
                     screenshot_path = SCREENSHOTS_DIR / screenshot_filename
                     try:
-                        page.screenshot(path=screenshot_path, timeout=2000)
+                        page.screenshot(path=screenshot_path, timeout=1000)
                         step_run["screenshot"] = screenshot_filename
                         log(f"Captured failure screenshot saved to: {screenshot_path}")
                     except Exception as screenshot_err:
                         logger.error(f"Failed to capture screenshot: {screenshot_err}")
-            else:
-                # No self-healing enabled or step is not healable
-                step_run["status"] = "FAILED"
-                step_run["error"] = error_repr
-                overall_status = "FAILED"
-                
-                # Capture failure screenshot
-                screenshot_filename = f"fail_{run_id}_step_{step_num}.png"
-                screenshot_path = SCREENSHOTS_DIR / screenshot_filename
-                try:
-                    page.screenshot(path=screenshot_path, timeout=2000)
-                    step_run["screenshot"] = screenshot_filename
-                    log(f"Captured failure screenshot saved to: {screenshot_path}")
-                except Exception as screenshot_err:
-                    logger.error(f"Failed to capture screenshot: {screenshot_err}")
-                    
-        step_run["duration"] = time.time() - step_start
-        execution_steps.append(step_run)
-        
-        # Break execution flow on step failure
-        if step_run["status"] == "FAILED":
-            break
+                        
+            step_run["duration"] = time.time() - step_start
+            execution_steps.append(step_run)
+            
+            # Break execution flow on step failure
+            if step_run["status"] == "FAILED":
+                break
 
-    duration = time.time() - start_time
-    log(f"Execution finished in {duration:.2f}s. Result: {overall_status}")
-    
-    # Close tab context
-    context.close()
-    
+        duration = time.time() - start_time
+        log(f"Execution finished in {duration:.2f}s. Result: {overall_status}")
+    finally:
+        # Always guarantee context is closed so tabs and processes are released
+        try:
+            context.close()
+        except Exception:
+            pass
+        
     # Compile run data
     run_data["status"] = overall_status
     run_data["duration"] = duration

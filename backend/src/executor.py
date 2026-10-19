@@ -57,9 +57,9 @@ def execute_step(page, step: TestStep, timeout: int = PLAYWRIGHT_TIMEOUT) -> boo
     logger.info(f"Executing: {step.description} (Action: {action}, Target: {target}, Value: {value})")
 
     if action == "navigate":
-        # Fast timeout for localhost/127.0.0.1 to avoid 25s hangs when deployed in the cloud
+        # Fast snappy timeout: 3s for local, 8s max for remote HTTP(S) to ensure no hangs
         is_local = "localhost" in str(target) or "127.0.0.1" in str(target)
-        nav_timeout = 5000 if is_local else (20000 if ("http://" in str(target) or "https://" in str(target)) else max(timeout, 10000))
+        nav_timeout = 3000 if is_local else 8000
         try:
             page.goto(target, timeout=nav_timeout, wait_until="domcontentloaded")
             return True

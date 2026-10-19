@@ -113,7 +113,7 @@ export default function HomePage() {
       if (ghLower.includes("packet_analyzer") || ghLower.includes("packet-analyzer")) {
         setTargetBaseUrl("https://packet-analyzer-9lp9.onrender.com");
       } else if (isRender) {
-        setTargetBaseUrl("https://automation-testing-agent-backend.onrender.com/demo/login");
+        setTargetBaseUrl("https://automation-testing-agent-backend.onrender.com");
       } else if (repo.framework_detected === "fastapi" || repo.framework_detected === "django") {
         setTargetBaseUrl("http://localhost:8000");
       } else if (repo.framework_detected === "flask") {
@@ -740,10 +740,10 @@ export default function HomePage() {
                     <span className="text-gray-500 font-medium">Quick presets:</span>
                     <button
                       type="button"
-                      onClick={() => setTargetBaseUrl("https://automation-testing-agent-backend.onrender.com/demo/login")}
+                      onClick={() => setTargetBaseUrl("https://automation-testing-agent-backend.onrender.com")}
                       className="px-2 py-0.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-mono font-semibold transition-colors cursor-pointer"
                     >
-                      Demo Login (Live)
+                      Live Backend API
                     </button>
                     <button
                       type="button"
