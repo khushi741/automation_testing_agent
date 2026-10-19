@@ -186,17 +186,28 @@ def _process_test_run_job(job: dict, browser):
         for tc in cases:
             scenario = tc.description
 
-            # Resolve actual target URL (use run.target or fallback to live deployed Packet_analyzer)
+            # Resolve actual target URL (use run.target or fallback to live deployed endpoints)
             target_url = None
             if run.target and (run.target.startswith("http://") or run.target.startswith("https://")):
                 target_url = run.target.rstrip('/')
-            elif run.repo_id:
-                repo_obj = db.query(Repo).filter(Repo.id == run.repo_id).first()
-                if repo_obj and "packet_analyzer" in (repo_obj.github_url or "").lower():
-                    target_url = "https://packet-analyzer-9lp9.onrender.com"
 
-            if not target_url and any(r in scenario for r in ["/predict-flow", "/api/analytics", "/calculator", "/dashboard"]):
-                target_url = "https://packet-analyzer-9lp9.onrender.com"
+            # Cloud environment detection (Render / Docker container)
+            is_cloud = bool(os.environ.get("RENDER") or os.environ.get("PORT"))
+            is_localhost = target_url and ("localhost" in target_url or "127.0.0.1" in target_url)
+
+            # When running on Render, localhost is unreachable: smart-route to live endpoints
+            if not target_url or (is_cloud and is_localhost):
+                if run.repo_id:
+                    repo_obj = db.query(Repo).filter(Repo.id == run.repo_id).first()
+                    gh_lower = (repo_obj.github_url or "").lower() if repo_obj else ""
+                    if "packet_analyzer" in gh_lower or "packet-analyzer" in gh_lower:
+                        target_url = "https://packet-analyzer-9lp9.onrender.com"
+                    else:
+                        target_url = "https://automation-testing-agent-backend.onrender.com/demo/login"
+                elif any(r in scenario for r in ["/predict-flow", "/api/analytics", "/calculator", "/dashboard"]):
+                    target_url = "https://packet-analyzer-9lp9.onrender.com"
+                elif is_cloud:
+                    target_url = "https://automation-testing-agent-backend.onrender.com/demo/login"
 
             if target_url:
                 for bad_origin in [

@@ -53,15 +53,22 @@ def execute_step(page, step: TestStep, timeout: int = PLAYWRIGHT_TIMEOUT) -> boo
     logger.info(f"Executing: {step.description} (Action: {action}, Target: {target}, Value: {value})")
 
     if action == "navigate":
-        # Navigating is always successful if it completes without throwing
-        # Cloud/remote hosts require sufficient timeout for DNS/TLS/Render cold-starts
-        nav_timeout = 25000 if ("http://" in str(target) or "https://" in str(target)) else max(timeout, 15000)
-        page.goto(target, timeout=nav_timeout, wait_until="domcontentloaded")
+        # Fast timeout for localhost/127.0.0.1 to avoid 25s hangs when deployed in the cloud
+        is_local = "localhost" in str(target) or "127.0.0.1" in str(target)
+        nav_timeout = 6000 if is_local else (25000 if ("http://" in str(target) or "https://" in str(target)) else max(timeout, 15000))
         try:
-            page.wait_for_load_state("load", timeout=5000)
-        except Exception:
-            pass
-        return True
+            page.goto(target, timeout=nav_timeout, wait_until="domcontentloaded")
+            try:
+                page.wait_for_load_state("load", timeout=3000)
+            except Exception:
+                pass
+            return True
+        except Exception as nav_err:
+            if is_local:
+                raise ConnectionError(
+                    f"Cannot reach '{target}'. When HealAgent runs in the cloud, it cannot access 'localhost' on your local computer. Please provide a live public URL (e.g. https://your-app.onrender.com) or use our demo site."
+                ) from nav_err
+            raise nav_err
 
     elif action == "click":
         locator = resolve_locator(page, target, action)

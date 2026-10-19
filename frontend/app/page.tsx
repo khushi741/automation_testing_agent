@@ -108,9 +108,12 @@ export default function HomePage() {
 
   useEffect(() => {
     if (repo && repo.status === "ready" && !targetBaseUrl) {
+      const isRender = typeof window !== "undefined" && window.location.hostname.includes("onrender.com");
       const ghLower = (repo.github_url || "").toLowerCase();
       if (ghLower.includes("packet_analyzer") || ghLower.includes("packet-analyzer")) {
         setTargetBaseUrl("https://packet-analyzer-9lp9.onrender.com");
+      } else if (isRender) {
+        setTargetBaseUrl("https://automation-testing-agent-backend.onrender.com/demo/login");
       } else if (repo.framework_detected === "fastapi" || repo.framework_detected === "django") {
         setTargetBaseUrl("http://localhost:8000");
       } else if (repo.framework_detected === "flask") {
@@ -735,15 +738,20 @@ export default function HomePage() {
                   {/* Preset quick selection pills */}
                   <div className="flex items-center gap-1.5 flex-wrap text-[11px]">
                     <span className="text-gray-500 font-medium">Quick presets:</span>
-                    {repo.github_url && repo.github_url.toLowerCase().includes("packet_analyzer") && (
-                      <button
-                        type="button"
-                        onClick={() => setTargetBaseUrl("https://packet-analyzer-9lp9.onrender.com")}
-                        className="px-2 py-0.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-mono font-semibold transition-colors cursor-pointer"
-                      >
-                        Render (packet-analyzer-9lp9)
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => setTargetBaseUrl("https://automation-testing-agent-backend.onrender.com/demo/login")}
+                      className="px-2 py-0.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-mono font-semibold transition-colors cursor-pointer"
+                    >
+                      Demo Login (Live)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTargetBaseUrl("https://packet-analyzer-9lp9.onrender.com")}
+                      className="px-2 py-0.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-300 text-indigo-800 font-mono font-semibold transition-colors cursor-pointer"
+                    >
+                      Packet Analyzer (Live)
+                    </button>
                     <button
                       type="button"
                       onClick={() => setTargetBaseUrl("http://localhost:8001")}
