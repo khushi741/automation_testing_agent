@@ -260,44 +260,38 @@ def _process_test_run_job(job: dict, browser):
                     "healing_logs": []
                 }
 
-                tc.status = result.get("status", "FAILED").lower()
-                tc.steps_json = result.get("steps", [])
-                tc.duration = result.get("duration", 0.0)
-                tc.error = result.get("error")
+            tc.status = result.get("status", "FAILED").lower()
+            tc.steps_json = result.get("steps", [])
+            tc.duration = result.get("duration", 0.0)
+            tc.error = result.get("error")
 
-                if tc.status == "passed":
-                    pass_count += 1
-                else:
-                    fail_count += 1
-
-                # Save healing events
-                for h in result.get("healing_logs", []):
-                    event = HealingEvent(
-                        test_case_id=tc.id,
-                        step_number=h.get("step_index"),
-                        original_selector=h.get("original_target", ""),
-                        healed_selector=h.get("healed_selector", ""),
-                        confidence_score=h.get("confidence", 0.0),
-                        representation=h.get("healed_representation", "")
-                    )
-                    db.add(event)
-                    heal_count += 1
-
-                # Save screenshots
-                for step in result.get("steps", []):
-                    if step.get("screenshot"):
-                        ss = Screenshot(
-                            test_case_id=tc.id,
-                            file_path=step["screenshot"],
-                            step_number=step.get("step_num")
-                        )
-                        db.add(ss)
-
-            except Exception as e:
-                tc.status = "failed"
-                tc.error = str(e)
+            if tc.status == "passed":
+                pass_count += 1
+            else:
                 fail_count += 1
-                logger.error(f"Test case execution error: {e}")
+
+            # Save healing events
+            for h in result.get("healing_logs", []):
+                event = HealingEvent(
+                    test_case_id=tc.id,
+                    step_number=h.get("step_index"),
+                    original_selector=h.get("original_target", ""),
+                    healed_selector=h.get("healed_selector", ""),
+                    confidence_score=h.get("confidence", 0.0),
+                    representation=h.get("healed_representation", "")
+                )
+                db.add(event)
+                heal_count += 1
+
+            # Save screenshots
+            for step in result.get("steps", []):
+                if step.get("screenshot"):
+                    ss = Screenshot(
+                        test_case_id=tc.id,
+                        file_path=step["screenshot"],
+                        step_number=step.get("step_num")
+                    )
+                    db.add(ss)
 
             run.pass_count = pass_count
             run.fail_count = fail_count
@@ -708,6 +702,21 @@ def get_test_run(run_id: str, db: Session = Depends(get_db)):
     run = db.query(TestRun).filter(TestRun.id == run_id).first()
     if not run:
         raise HTTPException(status_code=404, detail="Test run not found")
+
+    # Auto-repair inconsistent state where run finished but test cases remained 'running'
+    if run.status in ["completed", "failed"] and run.test_cases:
+        dirty = False
+        for tc in run.test_cases:
+            if tc.status == "running":
+                tc.status = "passed" if run.status == "completed" and not tc.error else "failed"
+                dirty = True
+        if dirty:
+            if run.pass_count == 0 and run.fail_count == 0:
+                run.pass_count = sum(1 for tc in run.test_cases if tc.status == "passed")
+                run.fail_count = sum(1 for tc in run.test_cases if tc.status == "failed")
+            db.commit()
+            db.refresh(run)
+
     return run
 
 
