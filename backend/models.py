@@ -25,6 +25,7 @@ class Repo(Base):
 
     test_runs = relationship("TestRun", back_populates="repo", cascade="all, delete-orphan")
     generated_cases = relationship("GeneratedTestCase", back_populates="repo", cascade="all, delete-orphan")
+    analysis_runs = relationship("AnalysisRun", back_populates="repo", cascade="all, delete-orphan")
 
 
 class GeneratedTestCase(Base):
@@ -101,3 +102,70 @@ class Screenshot(Base):
     step_number = Column(Integer, nullable=True)
 
     test_case = relationship("TestCase", back_populates="screenshots")
+
+
+# ─── HealAgent 2.0 Models: Bugs, Findings, and Patches ───────────────────────
+
+class AnalysisRun(Base):
+    """Execution run of the bug detection and verified fixing pipeline."""
+    __tablename__ = "analysis_runs"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    repo_id = Column(String, ForeignKey("repos.id"), nullable=True)
+    repo_name = Column(String, nullable=True)
+    status = Column(String, default="pending")  # pending, detecting, triaging, fixing, verifying, completed, failed
+    started_at = Column(DateTime, default=datetime.utcnow)
+    completed_at = Column(DateTime, nullable=True)
+    total_findings = Column(Integer, default=0)
+    verified_fixes = Column(Integer, default=0)
+    needs_review = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    repo = relationship("Repo", back_populates="analysis_runs")
+    findings = relationship("Finding", back_populates="run", cascade="all, delete-orphan")
+    patches = relationship("Patch", back_populates="run", cascade="all, delete-orphan")
+
+
+class Finding(Base):
+    """Canonical representation of an individual bug or defect found by tools."""
+    __tablename__ = "findings"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    run_id = Column(String, ForeignKey("analysis_runs.id"), nullable=False)
+    file = Column(String, nullable=False)
+    line_start = Column(Integer, nullable=False)
+    line_end = Column(Integer, nullable=False)
+    category = Column(String, nullable=False)  # security, crash, correctness, performance, style
+    severity = Column(String, nullable=False)  # critical, high, medium, low, info
+    source_tool = Column(String, nullable=False)  # bandit, ruff, etc.
+    message = Column(Text, nullable=False)
+    evidence = Column(Text, nullable=True)
+    confidence = Column(Float, default=1.0)
+    status = Column(String, default="open")  # open, triaged, patch_proposed, verified, needs_review, ignored
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    run = relationship("AnalysisRun", back_populates="findings")
+    patches = relationship("Patch", back_populates="finding", cascade="all, delete-orphan")
+
+
+class Patch(Base):
+    """Proposed or verified code fix patch for a finding."""
+    __tablename__ = "patches"
+
+    id = Column(String, primary_key=True, default=generate_uuid)
+    finding_id = Column(String, ForeignKey("findings.id"), nullable=False)
+    run_id = Column(String, ForeignKey("analysis_runs.id"), nullable=False)
+    diff_content = Column(Text, nullable=False)
+    old_snippet = Column(Text, nullable=True)
+    new_snippet = Column(Text, nullable=True)
+    status = Column(String, default="proposed")  # proposed, verified, rejected, needs_review
+    attempts = Column(Integer, default=0)
+    verification_log = Column(JSON, default=list)
+    failure_reason = Column(Text, nullable=True)
+    lines_added = Column(Integer, default=0)
+    lines_removed = Column(Integer, default=0)
+    explanation = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    finding = relationship("Finding", back_populates="patches")
+    run = relationship("AnalysisRun", back_populates="patches")
