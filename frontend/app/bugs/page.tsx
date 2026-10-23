@@ -303,8 +303,12 @@ export default function BugsAndFixesPage() {
                         </td>
 
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 py-1 rounded text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 uppercase">
-                            {finding.source_tool}
+                          <span className={`px-2 py-1 rounded text-xs font-semibold uppercase ${
+                            finding.source_tool === "failing_test"
+                              ? "bg-purple-950/60 text-purple-300 border border-purple-700/60"
+                              : "bg-slate-800 text-slate-300 border border-slate-700"
+                          }`}>
+                            {finding.source_tool === "failing_test" ? "Failing Test" : finding.source_tool}
                           </span>
                         </td>
 
