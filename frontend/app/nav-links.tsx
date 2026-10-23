@@ -63,23 +63,25 @@ export function NavLinks() {
         <div className="hidden sm:flex items-center gap-1.5">
           <Link
             href="/bugs"
-            className={`px-3.5 py-1.5 text-sm font-medium transition-colors rounded-lg ${
+            className={`px-3.5 py-1.5 text-sm font-medium transition-colors rounded-lg flex items-center gap-1.5 ${
               isBugsActive
                 ? "text-emerald-800 bg-emerald-100/70 font-semibold border border-emerald-200/60 shadow-xs"
                 : "text-gray-600 hover:text-emerald-800 hover:bg-emerald-50/80"
             }`}
           >
-            Bugs & Fixes
+            <span>Bugs & Fixes</span>
+            <span className="text-[10px] bg-emerald-600 text-white font-bold px-1.5 py-0.5 rounded-full">2.0</span>
           </Link>
           <Link
             href="/benchmark"
-            className={`px-3.5 py-1.5 text-sm font-medium transition-colors rounded-lg ${
+            className={`px-3.5 py-1.5 text-sm font-medium transition-colors rounded-lg flex items-center gap-1.5 ${
               isBenchActive
                 ? "text-emerald-800 bg-emerald-100/70 font-semibold border border-emerald-200/60 shadow-xs"
                 : "text-gray-600 hover:text-emerald-800 hover:bg-emerald-50/80"
             }`}
           >
-            Benchmark
+            <span>Benchmarks</span>
+            <span className="text-[10px] bg-teal-600 text-white font-bold px-1.5 py-0.5 rounded-full">2.0</span>
           </Link>
           <Link
             href="/runs"
@@ -128,6 +130,26 @@ export function NavLinks() {
       {mobileMenuOpen && (
         <div className="sm:hidden border-t border-emerald-100 py-3 px-1 space-y-1 bg-white/95 backdrop-blur-md rounded-b-2xl shadow-lg">
           <Link
+            href="/bugs"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors flex items-center justify-between ${
+              isBugsActive ? "bg-emerald-100/80 text-emerald-900 font-bold" : "text-emerald-950 hover:bg-emerald-50"
+            }`}
+          >
+            <span>Bugs & Fixes</span>
+            <span className="text-[10px] bg-emerald-600 text-white font-bold px-1.5 py-0.5 rounded-full">2.0</span>
+          </Link>
+          <Link
+            href="/benchmark"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors flex items-center justify-between ${
+              isBenchActive ? "bg-emerald-100/80 text-emerald-900 font-bold" : "text-emerald-950 hover:bg-emerald-50"
+            }`}
+          >
+            <span>Benchmarks</span>
+            <span className="text-[10px] bg-teal-600 text-white font-bold px-1.5 py-0.5 rounded-full">2.0</span>
+          </Link>
+          <Link
             href="/#connect"
             onClick={handleConnectClick}
             className="block px-4 py-2.5 text-sm font-medium text-emerald-950 rounded-lg hover:bg-emerald-50 transition-colors"
@@ -141,7 +163,7 @@ export function NavLinks() {
               isRunsActive ? "bg-emerald-100/80 text-emerald-900 font-bold" : "text-emerald-950 hover:bg-emerald-50"
             }`}
           >
-            Test Runs
+            Test Runs (1.0)
           </Link>
           <Link
             href="/evaluation"
