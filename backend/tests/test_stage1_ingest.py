@@ -66,7 +66,8 @@ def test_stage1():
     print(f"  Sandbox Path: {res2.sandbox.sandbox_path}")
     print(f"  Language: {res2.primary_language}")
     print(f"  Python Files: {res2.python_files}")
-    test_run2 = res2.sandbox.run_command(["pytest"], timeout=30)
+    # Run tests inside sandbox venv (original baseline tests)
+    test_run2 = res2.sandbox.run_command(["pytest", "-k", "not repro"], timeout=30)
     print(f"  Pytest in Sandbox: Exit Code {test_run2.returncode}")
     print(f"  Pytest Output: {test_run2.stdout.strip().splitlines()[-1] if test_run2.stdout else 'None'}")
     assert test_run2.returncode == 0
@@ -79,7 +80,7 @@ def test_stage1():
     print(f"  Sandbox Path: {res3.sandbox.sandbox_path}")
     print(f"  Has Frontend: {res3.has_frontend}")
     print(f"  Frontend Routes: {res3.frontend_routes}")
-    test_run3 = res3.sandbox.run_command(["pytest"], timeout=30)
+    test_run3 = res3.sandbox.run_command(["pytest", "-k", "not repro"], timeout=30)
     print(f"  Pytest in Sandbox: Exit Code {test_run3.returncode}")
     print(f"  Pytest Output: {test_run3.stdout.strip().splitlines()[-1] if test_run3.stdout else 'None'}")
     assert test_run3.returncode == 0

@@ -12,7 +12,7 @@ from typing import List, Dict, Any, Optional, Set
 
 from database import SessionLocal
 from models import Patch, Finding
-from src.pipeline.detect import DetectStage, CanonicalFinding
+from src.pipeline.detect import DetectStage, CanonicalFinding, is_test_file
 from src.pipeline.fix import ProposedPatch, FixStage
 from src.pipeline.sandbox import SandboxEnvironment
 from src.llm.provider import BaseLLMProvider, get_llm_provider
