@@ -46,7 +46,7 @@ Every proposed patch is evaluated in an isolated sandbox branch against a strict
 
 ## 4. Benchmark Evaluation & Performance
 
-HealAgent 2.0 was evaluated against a cryptographically frozen benchmark suite (`manifest.json`, 39 files, SHA256 verified) comprising 6 seeded repositories and 3 real-world open-source packages:
+HealAgent 2.0 was evaluated against a hash-checked benchmark suite (`manifest.json`, 39 files, SHA256 verified) comprising 6 seeded repositories and 3 real-world open-source packages. Hashes provide tamper-evident auditing against accidental drift or unauthorized edits (they are tamper-evident, not tamper-proof against deliberate hash overwrite):
 
 | Suite ID | Repository Name | Language | Seeded Defects | Detected | Verified Fixed | Verification Rate |
 |---|---|---|---|---|---|---|

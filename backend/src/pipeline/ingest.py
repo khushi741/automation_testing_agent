@@ -92,14 +92,14 @@ class IngestStage:
     def run(self, repo_source: str, analysis_id: str) -> IngestResult:
         logger.info(f"Starting IngestStage for '{repo_source}' (id: {analysis_id})")
 
-        # Step 0: Cryptographic benchmark integrity gate
+        # Step 0: Tamper-evident benchmark hash integrity gate
         if "benchmarks" in str(repo_source) and not str(repo_source).endswith("oss_real_files"):
             from src.pipeline.freeze_benchmark import validate_benchmark_integrity
             ok, msg = validate_benchmark_integrity()
             if not ok:
                 logger.error(f"Benchmark integrity violation: {msg}")
                 raise RuntimeError(f"PIPELINE ABORTED - BENCHMARK INTEGRITY VIOLATION: {msg}")
-            logger.info(f"Benchmark integrity verified: {msg}")
+            logger.info(f"Benchmark hash integrity verified (tamper-evident): {msg}")
 
         # Step 1: Create isolated sandbox and virtual environment
         sandbox = self.sandbox_manager.create_sandbox(

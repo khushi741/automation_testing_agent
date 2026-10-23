@@ -4,12 +4,12 @@ This document records technical and business decisions made during the autonomou
 
 ---
 
-### Decision 1: Benchmark Repository Freezing Mechanism (TIER 1.1)
-- **Choice**: Generate a cryptographic SHA256 manifest (`manifest.json`) for all files within benchmark suites, and tag the Git commit (`benchmark-frozen-v1`).
-- **Rationale**: Guarantees that benchmark source code and test files cannot drift or be subtly modified to pass tests. Any change to a benchmark file causes `IngestStage` to fail immediately.
+### Decision 1: Benchmark Repository Hash-Checking Mechanism (TIER 1.1)
+- **Choice**: Generate an SHA256 manifest (`manifest.json`) for all files within benchmark suites, and verify integrity at ingest time.
+- **Rationale**: Provides tamper-evident auditing against accidental drift or unauthorized edits (tamper-evident, not tamper-proof against deliberate file/hash overwrite). Any change to a benchmark file causes `IngestStage` to fail immediately.
 
 ### Decision 2: Byte-Identical Original Test Preservation (TIER 1.2)
-- **Choice**: Original benchmark test files must match their frozen baseline commit byte-for-byte (`git diff` is empty). All reproduction tests are generated into distinct `test_repro_*.py` files or clearly marked functions with prefix `test_repro_`.
+- **Choice**: Original benchmark test files must match their hash-checked baseline commit byte-for-byte (`git diff` is empty). All reproduction tests are generated into distinct `test_repro_*.py` files or clearly marked functions with prefix `test_repro_`.
 - **Rationale**: Completely eliminates any risk that a fixer or verifier modifies existing tests to make them pass.
 
 ### Decision 3: Trigger Runner: Crash vs Logic Assertion Verification (TIER 1.3)

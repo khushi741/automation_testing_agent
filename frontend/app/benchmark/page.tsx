@@ -64,7 +64,7 @@ export default function BenchmarkPage() {
               </span>
               <span className="text-xs text-slate-400 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                Cryptographically Frozen Suites
+                Hash-Checked Suites
               </span>
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight text-white mt-2">
@@ -85,7 +85,7 @@ export default function BenchmarkPage() {
           </div>
         </div>
 
-        {/* Cryptographic Freeze Banner */}
+        {/* Hash-Checked Tamper-Evident Banner */}
         <div className="bg-slate-900/90 border border-emerald-500/30 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400">
@@ -95,10 +95,10 @@ export default function BenchmarkPage() {
             </div>
             <div>
               <div className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
-                Cryptographic Integrity Gate: ACTIVE
+                Tamper-Evident Hash Integrity Gate: ACTIVE
               </div>
               <div className="text-sm text-slate-300">
-                All 39 benchmark files verified byte-identical against SHA256 manifest (<code className="text-xs text-emerald-300">manifest.json</code>). Zero drift detected.
+                All 39 benchmark files verified against SHA256 manifest (<code className="text-xs text-emerald-300">manifest.json</code>). Tamper-evident auditing against accidental drift or unintended edits (tamper-evident, not tamper-proof).
               </div>
             </div>
           </div>

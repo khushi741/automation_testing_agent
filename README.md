@@ -11,7 +11,7 @@
 
 ## What's New in HealAgent 2.0
 
-- **Cryptographically Frozen Benchmark Suites**: 6 repositories with 18 seeded defects across Python & TypeScript, verified byte-identical against SHA256 `manifest.json`.
+- **Hash-Checked Benchmark Suites**: 6 repositories with 18 seeded defects across Python & TypeScript, verified against SHA256 `manifest.json`. Hashes are tamper-evident (flagging accidental drift or unintended edits), not tamper-proof.
 - **Strict 3-Tier Verification Engine**:
   - **Check 1 (Clean Detector Re-Check)**: Bandit, Ruff, ESLint, or TSC confirms the original violation has disappeared.
   - **Check 2 (Zero Regressions)**: Full scan confirms no new errors or warnings were introduced.

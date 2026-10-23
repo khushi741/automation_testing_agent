@@ -36,8 +36,8 @@ def generate_benchmark_manifest() -> Dict[str, str]:
 
 def validate_benchmark_integrity() -> Tuple[bool, str]:
     """
-    Cryptographically verifies that no benchmark files have been altered,
-    tampered with, or modified since freezing.
+    Performs tamper-evident SHA256 integrity check to ensure benchmark files have
+    not drifted or been unintentionally modified.
     Fails the pipeline immediately if any drift is detected.
     """
     if not MANIFEST_PATH.exists():

@@ -142,7 +142,7 @@ export default function BugsAndFixesPage() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             <div>
-              <span className="font-semibold text-amber-300">Backend Server Warming Up:</span> Showing verified results from the frozen 6 benchmark suites with live cryptographic verification.
+              <span className="font-semibold text-amber-300">Backend Server Warming Up:</span> Showing verified results from the hash-checked 6 benchmark suites with tamper-evident SHA256 verification.
             </div>
           </div>
         )}
