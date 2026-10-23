@@ -1,0 +1,26 @@
+[
+  {
+    "id": "bug_repo6_ts_null_deref",
+    "file": "src/calculator.ts",
+    "line": 10,
+    "category": "crash",
+    "type": "NullReference",
+    "description": "Unchecked dereference on potentially null argument in parseNumericInput"
+  },
+  {
+    "id": "bug_repo6_unused_var",
+    "file": "src/calculator.ts",
+    "line": 6,
+    "category": "style",
+    "type": "UnusedVariable",
+    "description": "Unused variable unusedApiKey violates ESLint rules"
+  },
+  {
+    "id": "bug_repo6_discount_logic",
+    "file": "src/calculator.ts",
+    "line": 28,
+    "category": "correctness",
+    "type": "LogicError",
+    "description": "applyDiscount adds discount percentage instead of subtracting"
+  }
+]

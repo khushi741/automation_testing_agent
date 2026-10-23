@@ -1,0 +1,20 @@
+{
+  "name": "repo2_py_crash",
+  "description": "Calculation and profile utility with unhandled None dereference and ZeroDivisionError",
+  "expected_bugs": [
+    {
+      "file": "calculator.py",
+      "category": "crash",
+      "severity": "high",
+      "source_tool": "ruff",
+      "description": "ZeroDivisionError when input list is empty"
+    },
+    {
+      "file": "calculator.py",
+      "category": "crash",
+      "severity": "medium",
+      "source_tool": "ruff",
+      "description": "Unhandled None dereference on email dictionary lookup"
+    }
+  ]
+}

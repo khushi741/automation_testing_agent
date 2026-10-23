@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -31,6 +31,8 @@ export function NavLinks() {
 
   const isRunsActive = pathname.startsWith("/runs");
   const isEvalActive = pathname.startsWith("/evaluation");
+  const isBugsActive = pathname.startsWith("/bugs");
+  const isBenchActive = pathname.startsWith("/benchmark");
 
   return (
     <div>
@@ -53,18 +55,31 @@ export function NavLinks() {
             </svg>
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-emerald-800 via-teal-700 to-green-700 bg-clip-text text-transparent">
-            HealAgent
+            HealAgent 2.0
           </span>
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden sm:flex items-center gap-1.5">
           <Link
-            href="/#connect"
-            onClick={handleConnectClick}
-            className="px-3.5 py-1.5 text-sm text-gray-600 hover:text-emerald-800 font-medium transition-colors rounded-lg hover:bg-emerald-50/80"
+            href="/bugs"
+            className={`px-3.5 py-1.5 text-sm font-medium transition-colors rounded-lg ${
+              isBugsActive
+                ? "text-emerald-800 bg-emerald-100/70 font-semibold border border-emerald-200/60 shadow-xs"
+                : "text-gray-600 hover:text-emerald-800 hover:bg-emerald-50/80"
+            }`}
           >
-            Connect Repo
+            Bugs & Fixes
+          </Link>
+          <Link
+            href="/benchmark"
+            className={`px-3.5 py-1.5 text-sm font-medium transition-colors rounded-lg ${
+              isBenchActive
+                ? "text-emerald-800 bg-emerald-100/70 font-semibold border border-emerald-200/60 shadow-xs"
+                : "text-gray-600 hover:text-emerald-800 hover:bg-emerald-50/80"
+            }`}
+          >
+            Benchmark
           </Link>
           <Link
             href="/runs"

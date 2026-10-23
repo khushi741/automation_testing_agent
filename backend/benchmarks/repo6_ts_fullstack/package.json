@@ -1,0 +1,15 @@
+{
+  "name": "repo6-ts-fullstack",
+  "version": "1.0.0",
+  "description": "TypeScript benchmark repository with seeded bugs",
+  "main": "dist/calculator.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src/**/*.ts",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "eslint": "^8.50.0"
+  }
+}

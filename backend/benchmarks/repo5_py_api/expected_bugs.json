@@ -1,0 +1,26 @@
+[
+  {
+    "id": "bug_repo5_pathtraversal",
+    "file": "api_service.py",
+    "line": 12,
+    "category": "security",
+    "type": "PathTraversal",
+    "description": "Path traversal vulnerability allows reading outside base directory"
+  },
+  {
+    "id": "bug_repo5_keyerror",
+    "file": "api_service.py",
+    "line": 22,
+    "category": "crash",
+    "type": "KeyError",
+    "description": "KeyError when user_data dictionary lacks profile or tier key"
+  },
+  {
+    "id": "bug_repo5_coupon_logic",
+    "file": "api_service.py",
+    "line": 32,
+    "category": "correctness",
+    "type": "LogicError",
+    "description": "Inverted coupon expiration logic treats active coupons as expired"
+  }
+]

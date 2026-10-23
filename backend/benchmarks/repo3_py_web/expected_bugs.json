@@ -1,0 +1,13 @@
+{
+  "name": "repo3_py_web",
+  "description": "Mini web billing service with unhandled discount edge case and web routes",
+  "expected_bugs": [
+    {
+      "file": "app.py",
+      "category": "correctness",
+      "severity": "medium",
+      "source_tool": "ruff",
+      "description": "Negative invoice total when discount exceeds subtotal"
+    }
+  ]
+}

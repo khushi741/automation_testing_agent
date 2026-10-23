@@ -1,0 +1,22 @@
+{
+  "name": "repo1_py_security",
+  "description": "Flask service with SQL injection and hardcoded security flaws",
+  "expected_bugs": [
+    {
+      "file": "app.py",
+      "category": "security",
+      "severity": "high",
+      "source_tool": "bandit",
+      "tool_code": "B608",
+      "description": "SQL injection via string formatting in execute()"
+    },
+    {
+      "file": "app.py",
+      "category": "security",
+      "severity": "medium",
+      "source_tool": "bandit",
+      "tool_code": "B104",
+      "description": "Hardcoded bind to all network interfaces 0.0.0.0"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "bug_repo4_zerodiv",
+    "file": "math_utils.py",
+    "line": 11,
+    "category": "crash",
+    "type": "ZeroDivisionError",
+    "description": "ZeroDivisionError when input list contains 0"
+  },
+  {
+    "id": "bug_repo4_indexerr",
+    "file": "math_utils.py",
+    "line": 20,
+    "category": "crash",
+    "type": "IndexError",
+    "description": "IndexError when items is empty"
+  },
+  {
+    "id": "bug_repo4_offbyone",
+    "file": "math_utils.py",
+    "line": 31,
+    "category": "correctness",
+    "type": "LogicError",
+    "description": "Off-by-one in years calculation for compound interest"
+  },
+  {
+    "id": "bug_repo4_fib_perf",
+    "file": "math_utils.py",
+    "line": 42,
+    "category": "performance",
+    "type": "PerformanceHotspot",
+    "description": "Exponential recursion O(2^N) in Fibonacci calculation"
+  }
+]

@@ -1,0 +1,27 @@
+llm:
+  provider: "gemini"
+  model: "gemini-3.5-flash-lite"
+  api_key_env: "GEMINI_API_KEY"
+  temperature: 0.1
+  timeout_seconds: 45
+
+pipeline:
+  max_retries: 3
+  batch_size: 5
+  severity_threshold: "low"
+  detectors:
+    - "ruff"
+    - "bandit"
+  trusted_repos:
+    - "local_benchmarks"
+    - "benchmarks/repo1_py_security"
+    - "benchmarks/repo2_py_crash"
+    - "benchmarks/repo3_py_web"
+  allow_all_repos: false
+
+sandbox:
+  root_dir: "scratch/sandboxes"
+  venv_dir_name: ".sandbox_venv"
+  subprocess_timeout_seconds: 60
+  install_dependencies: true
+  docker_enabled: false

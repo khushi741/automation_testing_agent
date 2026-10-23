@@ -165,6 +165,13 @@ class Patch(Base):
     lines_added = Column(Integer, default=0)
     lines_removed = Column(Integer, default=0)
     explanation = Column(Text, nullable=True)
+    model_name = Column(String, default="gemini-3.5-flash-lite")
+    thinking_level = Column(String, default="standard")
+    assumption = Column(Text, nullable=True)
+    check1_status = Column(Boolean, default=False)
+    check2_status = Column(Boolean, default=False)
+    check3_status = Column(Boolean, default=False)
+    combined_status = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     finding = relationship("Finding", back_populates="patches")
