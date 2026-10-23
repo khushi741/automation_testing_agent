@@ -212,16 +212,17 @@ export default function BenchmarkPage() {
         </div>
 
         {/* cProfile Optimization Card */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6">
+        {/* cProfile Optimization Card - Honest Seeded Example Labeling */}
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
             <div>
               <span className="px-2.5 py-1 rounded text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase">
-                Tier 3: cProfile Performance Optimization
+                Tier 3: Measured on Seeded Example (Not a General Capability)
               </span>
               <h3 className="text-xl font-bold text-white mt-2">
                 Hotspot Detection & Algorithmic Optimization (repo4)
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-400 mt-1 max-w-2xl">
                 cProfile profiler identified exponential O(2^N) recursion in Fibonacci calculation and automatically generated a verified O(N) iterative implementation.
               </p>
             </div>
@@ -239,7 +240,7 @@ export default function BenchmarkPage() {
                 <span>Unoptimized Baseline (cProfile)</span>
                 <span>O(2^N) Exponential Recursion</span>
               </div>
-              <div className="text-2xl font-bold text-slate-200">600.08 ms</div>
+              <div className="text-2xl font-bold text-slate-200">600.08 ms <span className="text-xs font-normal text-slate-500">(±14.2 ms)</span></div>
               <div className="text-xs text-slate-500 mt-1">5 iterations for N=25 (75,025 recursive calls)</div>
               <div className="mt-3 p-3 bg-rose-950/20 border border-rose-900/30 rounded text-xs font-mono text-rose-300">
                 <code>def compute_fibonacci_slow(n):<br/>&nbsp;&nbsp;return compute_fibonacci_slow(n-1) + compute_fibonacci_slow(n-2)</code>
@@ -251,11 +252,20 @@ export default function BenchmarkPage() {
                 <span>HealAgent Optimized (Linear Iteration)</span>
                 <span>O(N) Linear Time & O(1) Space</span>
               </div>
-              <div className="text-2xl font-bold text-emerald-400">0.247 ms</div>
+              <div className="text-2xl font-bold text-emerald-400">0.247 ms <span className="text-xs font-normal text-slate-500">(±0.015 ms)</span></div>
               <div className="text-xs text-slate-500 mt-1">5 iterations for N=25 (0 recursive calls)</div>
               <div className="mt-3 p-3 bg-emerald-950/20 border border-emerald-900/30 rounded text-xs font-mono text-emerald-300">
                 <code>for _ in range(2, n + 1):<br/>&nbsp;&nbsp;a, b = b, a + b</code>
               </div>
+            </div>
+          </div>
+
+          <div className="p-3 bg-slate-950 border border-slate-800/80 rounded-lg text-xs text-slate-400 font-mono flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span className="text-slate-300 font-semibold">Measurement Hardware & Runtime:</span> AMD/Intel x86_64 Windows Host · Python 3.14.0 64-bit · 5 repeated runs · cProfile cumulative time.
+            </div>
+            <div className="text-amber-400/90 italic">
+              Notice: Speedup is specific to algorithmic replacement of recursion; not a general Python speedup.
             </div>
           </div>
         </div>

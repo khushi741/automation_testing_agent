@@ -371,20 +371,31 @@ export default function BugsAndFixesPage() {
                                 </div>
                               </div>
 
-                              {/* Amber Assumption Callout */}
+                              {/* Amber Assumption Callout & Human Decision Options */}
                               {patch.assumption && (
-                                <div className="bg-amber-950/30 border-l-4 border-amber-500 p-4 rounded-r-xl">
+                                <div className="bg-amber-950/30 border-l-4 border-amber-500 p-4 rounded-r-xl space-y-2">
                                   <div className="flex items-start gap-3">
                                     <span className="text-amber-400 text-lg leading-none mt-0.5">⚠️</span>
-                                    <div>
-                                      <div className="text-xs font-semibold text-amber-300 uppercase tracking-wide">
-                                        HealAgent Assumption & Disclaimer
+                                    <div className="space-y-1.5 w-full">
+                                      <div className="text-xs font-semibold text-amber-300 uppercase tracking-wide flex items-center justify-between">
+                                        <span>HealAgent Behavioral Assumption & Options</span>
+                                        <span className="text-amber-400 font-mono text-[11px] font-normal">Human Confirmation Needed</span>
                                       </div>
-                                      <p className="text-sm text-amber-200 mt-1">
+                                      <p className="text-sm text-amber-200">
                                         {patch.assumption}
                                       </p>
-                                      <p className="text-xs text-amber-400/80 mt-1 font-mono italic">
-                                        Reminder: Passing tests does not guarantee unchanged behavior. Human review is recommended.
+                                      
+                                      <div className="mt-2 pt-2 border-t border-amber-500/20 text-xs text-amber-300/90">
+                                        <div className="font-semibold text-amber-300 mb-1">Human Design Choices Available:</div>
+                                        <ul className="list-disc pl-4 space-y-1 text-amber-200/80 font-mono text-[11px]">
+                                          <li><strong className="text-emerald-400">Choice A (Implemented):</strong> Adopt default safe return / explicit guard as patched above.</li>
+                                          <li><strong className="text-amber-300">Choice B (Alternative):</strong> Raise an explicit domain-specific exception (e.g. InvalidArgumentError) instead of returning a default.</li>
+                                          <li><strong className="text-slate-300">Choice C (Alternative):</strong> Propagate error or make field mandatory in upstream database/API schema.</li>
+                                        </ul>
+                                      </div>
+
+                                      <p className="text-xs text-amber-400/90 pt-1 font-mono italic">
+                                        Mandatory Notice: Passing tests does not guarantee unchanged business behavior. Please confirm before merging to production.
                                       </p>
                                     </div>
                                   </div>
