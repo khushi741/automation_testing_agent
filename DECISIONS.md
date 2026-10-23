@@ -45,3 +45,24 @@ This document records technical and business decisions made during the autonomou
 ### Decision 10: Mandatory Transparency Disclaimer Policy (TIER 3.16)
 - **Choice**: Explicitly display the notice "Passing tests does not guarantee unchanged behavior" on the dashboard, benchmark pages, and documentation whenever automated repairs make assumptions about ambiguous requirements.
 - **Rationale**: Prevents overconfidence in automated test results and ensures human engineers are aware of assumed edge-case behaviors.
+
+### Decision 11: Terminology Clarification - Hash-Checked vs Cryptographically Frozen (FOLLOW-UP A.5)
+- **Choice**: Formally replace all occurrences of "cryptographically frozen" with "hash-checked" and state that benchmark file hashes provide tamper-evident auditing rather than absolute tamper-proofing.
+- **Rationale**: SHA256 manifests reliably detect unintended modifications, regressions, and drift; however, without hardware-level write protection or public cryptographic timestamping, local files can theoretically be modified alongside their hashes. Accurate terminology maintains scientific honesty.
+
+### Decision 12: Subprocess Sandbox Isolation for LLM Trigger Code (FOLLOW-UP B.6)
+- **Choice**: Implement `SafeTriggerRunner` executing dynamic trigger scripts in a standalone ephemeral subprocess directory with non-elevated permissions, disabled network sockets (`socket.socket = _blocked_socket`), blocked `.env` access, and strict 5-second execution timeouts.
+- **Rationale**: LLM-generated trigger code must never be permitted to access production secrets, open outbound network connections, or write files outside its dedicated disposable directory.
+
+### Decision 13: External Benchmark Holdout Split Discipline (FOLLOW-UP C.7 & C.8)
+- **Choice**: Partition QuixBugs into 5 train and 15 holdout programs, hashing and freezing the split manifest before running repairs. Strictly disallow any heuristic or prompt tuning on the 15 holdout programs.
+- **Rationale**: Guarantees zero data leakage and un-contaminated evaluation of generalization capability. For BugsInPy, require Docker-isolated host environments and document why Windows free-tier host limits require selective evaluation.
+
+### Decision 14: Test-Driven Repair Traceback Ingestion (FOLLOW-UP D.9 & D.10)
+- **Choice**: Parse standard pytest tracebacks into structured findings with `source_tool="failing_test"`, extracting the failed assertion and target function to synthesize minimal targeted patches that are verified by re-running the test.
+- **Rationale**: Bridges the gap between static analysis and test-driven regression repair, allowing HealAgent to heal code based directly on automated test failure reports.
+
+### Decision 15: Non-Destructive Custom Code Remediation Delivery (FOLLOW-UP F.13)
+- **Choice**: Add an allowlist API for custom repositories that strictly outputs an isolated local Git branch (`healagent-fixes-{run_id}`) and downloadable `.patch` file, strictly forbidding direct pushes to `main`.
+- **Rationale**: Preserves the developer's git repository integrity, guaranteeing that all automated fixes remain advisory proposals that must be reviewed and merged by a human developer.
+

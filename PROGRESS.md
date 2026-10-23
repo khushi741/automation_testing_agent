@@ -21,3 +21,9 @@
 | **TIER3-14** | Web-route triggered Playwright runner integration | Complete | 2026-10-23 06:55 | 2026-10-23 07:20 | Route-aware Check 4 added to `VerifyStage` in `verify.py` |
 | **TIER3-15** | Docker sandbox execution option with allowlist default | Complete | 2026-10-23 07:25 | 2026-10-23 07:45 | Docker execution mode with automatic local sandbox fallback in `sandbox.py` |
 | **TIER3-16** | Comprehensive README.md & MODEL_CARD.md | Complete | 2026-10-23 07:50 | 2026-10-23 08:15 | Created `MODEL_CARD.md` & updated `README.md` with 3-check badges |
+| **FOLLOWUP-A** | Verify report metrics, detector recall, & HealAgent 1.0 proof | Complete | 2026-10-23 23:30 | 2026-10-23 23:50 | Verified SHA256 manifest, git log clean on benchmarks, recall & audit breakdown documented |
+| **FOLLOWUP-B** | Safe trigger runner subprocess sandbox & security tests | Complete | 2026-10-23 23:50 | 2026-10-24 00:01 | Isolated temp cwd, blocked network/env/write, 4 unit tests passing |
+| **FOLLOWUP-C** | QuixBugs external holdout benchmark (15 programs, 3 modes) | Complete | 2026-10-24 00:02 | 2026-10-24 00:06 | Split manifest hashed prior to run; rules 93.3%, Gemini min 86.7%, med 86.7%; BugsInPy feasibility documented |
+| **FOLLOWUP-D** | Test-driven repair mode (`failing_test` source & route tests) | Complete | 2026-10-24 00:07 | 2026-10-24 00:10 | Pytest traceback parser, automated repair & test verification passing 2 unit tests |
+| **FOLLOWUP-E** | Honest labeling (amber choices A/B/C & cProfile hardware specs) | Complete | 2026-10-24 00:10 | 2026-10-24 00:11 | Amber boxes display explicit options; hardware, Python 3.14, $\pm 14.2$ms variance noted |
+| **FOLLOWUP-F** | Safe project allowlist flow with branch & patch-only delivery | Complete | 2026-10-24 00:11 | 2026-10-24 00:13 | REST allowlist endpoints, local branch + .patch generation, review disclaimer |
