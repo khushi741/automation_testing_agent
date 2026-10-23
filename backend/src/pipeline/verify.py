@@ -495,6 +495,13 @@ class VerifyStage:
                 patch.check3_status = res.check3_repo_tests_passed
                 patch.combined_status = res.combined_verification_passed
                 db.commit()
+                logger.info(f"Updated patch {patch.id} in DB: status={patch.status}")
+        except Exception as e:
+            db.rollback()
+            logger.error(f"Failed to update patch verification in DB: {e}")
+        finally:
+            db.close()
+
     def _is_frontend_route_file(self, file_path: str, sandbox: SandboxEnvironment) -> bool:
         """Determines if the modified file implements HTTP routes or web templates."""
         norm = file_path.lower().replace("\\", "/")

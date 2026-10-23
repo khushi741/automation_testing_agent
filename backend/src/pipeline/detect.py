@@ -255,75 +255,21 @@ SOURCE CODE:
 
     def _verify_crash_with_trigger(self, file_path: Path, evidence: str, trigger_input: str, message: str, assertion: str = "") -> Tuple[bool, str]:
         """
-        Executes the file in an isolated Python subprocess with the trigger input
-        to determine if an unhandled crash or logic defect actually occurs.
-        - For crash bugs: Confirmed if an unhandled runtime exception is raised.
-        - For logic bugs: Confirmed if evaluating the expected assertion fails (raises AssertionError).
+        Executes the file in an isolated, restricted subprocess via SafeTriggerRunner.
+        - Minimal environment (no API keys or tokens).
+        - No network (sockets blocked).
+        - No writes outside temporary directory.
+        - Restricted file access (.env blocked).
         """
-        import subprocess, sys
-        script = f'''
-import sys, importlib.util
-from pathlib import Path
-
-target = Path(r"{file_path}").resolve()
-globs = {{}}
-try:
-    spec = importlib.util.spec_from_file_location("test_target_mod", str(target))
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    globs = {{k: getattr(mod, k) for k in dir(mod)}}
-except Exception:
-    pass
-
-trigger = """{trigger_input}"""
-ev = """{evidence}"""
-assertion = """{assertion}"""
-
-try:
-    exec(trigger, globs)
-    if assertion:
-        try:
-            exec(assertion, globs)
-            print("LOGIC_SAFE_NO_BUG")
-            sys.exit(0)
-        except AssertionError as ae:
-            print(f"CRASH_CONFIRMED:AssertionError:{{ae or 'Assertion failed: ' + assertion}}")
-            sys.exit(0)
-
-    if ev and ev not in trigger:
-        try:
-            val = eval(ev, globs)
-            if "negative" in """{message.lower()}""" and isinstance(val, (int, float)) and val < 0:
-                print(f"CRASH_CONFIRMED:LogicError:Negative value returned {{val}}")
-                sys.exit(0)
-        except SyntaxError:
-            exec(ev, globs)
-    print("NO_CRASH")
-except (ZeroDivisionError, AttributeError, TypeError, IndexError, KeyError, ValueError) as crash:
-    print(f"CRASH_CONFIRMED:{{type(crash).__name__}}:{{crash}}")
-except AssertionError as ae:
-    print(f"CRASH_CONFIRMED:AssertionError:{{ae}}")
-except Exception as other:
-    print(f"OTHER_EXCEPTION:{{type(other).__name__}}:{{other}}")
-'''
-        try:
-            proc = subprocess.run(
-                [sys.executable, "-c", script],
-                capture_output=True,
-                text=True,
-                timeout=12
-            )
-            out = proc.stdout.strip()
-            if "CRASH_CONFIRMED:" in out:
-                crash_info = out.split("CRASH_CONFIRMED:")[1].strip()
-                return True, crash_info
-            if "NO_CRASH" in out:
-                return False, "Handled safely without error"
-            return False, f"Not confirmed ({out[:100]})"
-        except subprocess.TimeoutExpired:
-            return True, "Execution timed out (infinite loop)"
-        except Exception as e:
-            return False, str(e)
+        from src.pipeline.safe_trigger_runner import SafeTriggerRunner
+        runner = SafeTriggerRunner(timeout_seconds=5)
+        return runner.run_trigger(
+            target_file=file_path,
+            trigger_code=trigger_input,
+            evidence=evidence,
+            assertion=assertion,
+            message=message
+        )
 
     def _run_ruff(self, sandbox: SandboxEnvironment) -> List[CanonicalFinding]:
         """Runs Ruff and normalizes JSON findings."""
