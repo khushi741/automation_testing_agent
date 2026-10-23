@@ -1,0 +1,278 @@
+{
+  "rules_only": {
+    "bucketsort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "find_first_in_sorted": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "find_in_sorted": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "flatten": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "get_factors": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "kheapsort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "knapsack": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "kth": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "levenshtein": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": false,
+      "failure_reason": "Tests failed after patch"
+    },
+    "lis": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "mergesort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "pascal": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "quicksort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "rpn_eval": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "sieve": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    }
+  },
+  "gemini_minimal": {
+    "bucketsort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "find_first_in_sorted": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "find_in_sorted": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "flatten": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "get_factors": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "kheapsort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": false,
+      "failure_reason": "Heappop order assumption mismatch with generator stream"
+    },
+    "knapsack": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "kth": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "levenshtein": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": false,
+      "failure_reason": "Partial fix missed full 3-way deletion/insertion recursion branch"
+    },
+    "lis": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "mergesort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "pascal": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "quicksort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "rpn_eval": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "sieve": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    }
+  },
+  "gemini_medium": {
+    "bucketsort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "find_first_in_sorted": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "find_in_sorted": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "flatten": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "get_factors": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "kheapsort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": false,
+      "failure_reason": "Heappop order assumption mismatch with generator stream"
+    },
+    "knapsack": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "kth": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "levenshtein": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": false,
+      "failure_reason": "Test assertion failed"
+    },
+    "lis": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "mergesort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "pascal": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "quicksort": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "rpn_eval": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    },
+    "sieve": {
+      "bug_found": true,
+      "fix_produced": true,
+      "tests_pass": true,
+      "failure_reason": null
+    }
+  }
+}
