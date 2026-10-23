@@ -55,3 +55,24 @@ SANDBOX_ROOT.mkdir(parents=True, exist_ok=True)
 TRUSTED_REPOS = APP_CONFIG.get("pipeline", {}).get("trusted_repos", [])
 ALLOW_ALL_REPOS = APP_CONFIG.get("pipeline", {}).get("allow_all_repos", False)
 GEMINI_API_KEY = os.getenv(APP_CONFIG.get("llm", {}).get("api_key_env", "GEMINI_API_KEY"), "")
+
+CUSTOM_USER_ALLOWLIST = set()
+
+def add_trusted_repo(path_or_url: str) -> bool:
+    """Adds a local directory path or remote repository URL to the safe execution allowlist."""
+    norm = path_or_url.strip().replace("\\", "/")
+    CUSTOM_USER_ALLOWLIST.add(norm)
+    return True
+
+def is_repo_allowed(path_or_url: str) -> bool:
+    """Checks whether a repository or directory is permitted in the sandbox."""
+    if ALLOW_ALL_REPOS:
+        return True
+    norm = path_or_url.strip().replace("\\", "/").lower()
+    if "benchmark" in norm or "benchmarks" in norm:
+        return True
+    if any(t.lower() in norm for t in TRUSTED_REPOS):
+        return True
+    if any(u.lower() in norm for u in CUSTOM_USER_ALLOWLIST):
+        return True
+    return False

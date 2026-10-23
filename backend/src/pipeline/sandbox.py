@@ -134,19 +134,8 @@ class SandboxManager:
         Validates if repository is in the allowlist.
         Only trusted benchmark repos or explicitly configured repos are permitted.
         """
-        if ALLOW_ALL_REPOS:
-            return True
-
-        normalized_source = repo_source.replace("\\", "/").lower()
-        if "benchmark" in normalized_source or "benchmarks" in normalized_source:
-            return True
-
-        for trusted in TRUSTED_REPOS:
-            norm_trusted = trusted.replace("\\", "/").lower()
-            if norm_trusted in normalized_source or normalized_source.endswith(norm_trusted):
-                return True
-
-        return False
+        from src.config import is_repo_allowed
+        return is_repo_allowed(repo_source)
 
     def create_sandbox(
         self,

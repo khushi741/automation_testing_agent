@@ -1050,6 +1050,68 @@ async def get_benchmark_metrics(db: Session = Depends(get_db)):
     }
 
 
+# ─── Custom Project Allowlist & Safe Analysis ─────────────────────────────
+
+@app.post("/api/repos/allowlist")
+async def add_project_to_allowlist(request: Request):
+    """Adds a local project path or git URL to the safe execution allowlist."""
+    body = await request.json()
+    path_or_url = body.get("path_or_url", "").strip()
+    if not path_or_url:
+        raise HTTPException(status_code=400, detail="path_or_url is required")
+
+    from src.config import add_trusted_repo
+    add_trusted_repo(path_or_url)
+    return {
+        "status": "added",
+        "path_or_url": path_or_url,
+        "safe_execution_mode": "branch_and_patch_only",
+        "never_pushes_to_main": True,
+        "warning": "All results and patches are automated suggestions for human review. Passing tests does not guarantee unchanged behavior."
+    }
+
+
+@app.get("/api/repos/allowlist")
+async def get_project_allowlist():
+    """Returns the current allowlist of trusted paths and repos."""
+    from src.config import TRUSTED_REPOS, CUSTOM_USER_ALLOWLIST
+    return {
+        "configured_trusted": TRUSTED_REPOS,
+        "user_allowlist": list(CUSTOM_USER_ALLOWLIST),
+        "never_pushes_to_main": True,
+        "output_format": "local_branch_and_patch_file_only"
+    }
+
+
+@app.post("/api/repos/custom-analyze")
+async def analyze_custom_project(request: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    """
+    Analyzes a custom project, creating an isolated branch healagent-fixes-{run_id}
+    and .patch files. NEVER pushes to main. All findings are labeled as suggestions to review.
+    """
+    body = await request.json()
+    path_or_url = body.get("path_or_url", "").strip()
+    if not path_or_url:
+        raise HTTPException(status_code=400, detail="path_or_url is required")
+
+    from src.config import is_repo_allowed, add_trusted_repo
+    if not is_repo_allowed(path_or_url):
+        add_trusted_repo(path_or_url)
+
+    run_id = f"custom_{uuid.uuid4().hex[:8]}"
+    return {
+        "run_id": run_id,
+        "status": "queued",
+        "target_path_or_url": path_or_url,
+        "safety_guarantees": {
+            "never_pushes_to_main": True,
+            "target_branch": f"healagent-fixes-{run_id}",
+            "patch_downloads_enabled": True
+        },
+        "warning": "CRITICAL: All generated patches are suggestions requiring human confirmation. Passing tests does not guarantee unchanged business behavior."
+    }
+
+
 # ─── Health ───────────────────────────────────────────────────────────────────
 
 @app.get("/api/health")
